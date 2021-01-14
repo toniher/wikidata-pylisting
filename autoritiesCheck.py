@@ -77,6 +77,7 @@ if "dump" in args:
         cur.execute("CREATE INDEX idx_authorities ON authorities (authority);")
 
         iter = 0
+        id = None
         with gzip.open(args.dump,'rt') as f:
             for line in f:
                 detectid = re.findall( r'\"id\":\"(Q\d+)\"', line )
@@ -89,7 +90,8 @@ if "dump" in args:
                         if prop in authorities:
                             authp.append( prop )
                     # pp.pprint( authp )
-                    if len( authp ) > 0:
+                    if len( authp ) > 0 && id is not None :
                         iter = addToDb( id, list(set(authp)), conn, iter )
+                        id = None
 
         conn.commit()
