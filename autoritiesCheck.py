@@ -80,7 +80,7 @@ if "dump" in args:
         id = None
         with gzip.open(args.dump,'rt') as f:
             for line in f:
-                detectid = re.findall( r'\"type\":\"item\"\,\s*"\"id\":\"(Q\d+)\"', line )
+                detectid = re.findall( r'\"type\":\"item\",\"id\":\"(Q\d+)\"', line )
                 if len( detectid ) > 0:
                     id = detectid[0]
                     # print( id )
