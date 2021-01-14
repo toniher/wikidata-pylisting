@@ -90,7 +90,7 @@ if "dump" in args:
                         if prop in authorities:
                             authp.append( prop )
                     # pp.pprint( authp )
-                    if len( authp ) > 0 && id is not None :
+                    if len( authp ) > 0 and id is not None :
                         iter = addToDb( id, list(set(authp)), conn, iter )
                         id = None
 
