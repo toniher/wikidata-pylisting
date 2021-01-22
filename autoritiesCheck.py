@@ -19,6 +19,7 @@ args = parser.parse_args()
 
 data = {}
 authorities = {}
+authtypes = {}
 mysqlmode = False
 
 conn = None
@@ -64,6 +65,7 @@ if "authorities" in args:
             csvreader = csv.reader(authorities_file, delimiter='\t')
             for row in csvreader:
                 authorities[row[2]] = 1
+                authtypes[row[2]] = [ row[0], row[1], row[2], row[3] ]
 
 #pp.pprint( authorities )
 
@@ -75,6 +77,16 @@ if "dump" in args:
         cur.execute("CREATE TABLE IF NOT EXISTS `authorities` (  `id` VARCHAR(25), `authority` VARCHAR(25), PRIMARY KEY (`id`, `authority`) ) ;")
         cur.execute("CREATE INDEX idx_id ON authorities (id);")
         cur.execute("CREATE INDEX idx_authorities ON authorities (authority);")
+
+        cur.execute("DROP TABLE IF EXISTS `authtypes`;")
+        cur.execute("CREATE TABLE IF NOT EXISTS `authtypes` (  `name` VARCHAR(25), `desc` VARCHAR(125), `prop` VARCHAR(25), `authtype` int(1), PRIMARY KEY (`prop`) ) ;")
+        cur.execute("CREATE INDEX IF NOT EXISTS `idx_name` ON authtypes (name);")
+        cur.execute("CREATE INDEX IF NOT EXISTS `idx_type` ON authtypes (authtype);")
+
+
+        # Fill authtypes
+        for prop in authtypes:
+            c.execute( "INSERT INTO `authtypes` (`name`, `desc`, `prop`, `authtype`) VALUES ( %s, %s, %s, %s )", [ authtypes[prop][0], authtypes[prop][1], authtypes[prop][2], authtypes[prop][3] ] )
 
         iter = 0
         id = None
