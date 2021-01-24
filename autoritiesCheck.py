@@ -86,7 +86,7 @@ if "dump" in args:
 
         # Fill authtypes
         for prop in authtypes:
-            c.execute( "INSERT INTO `authtypes` (`name`, `desc`, `prop`, `authtype`) VALUES ( %s, %s, %s, %s )", [ authtypes[prop][0], authtypes[prop][1], authtypes[prop][2], authtypes[prop][3] ] )
+            cur.execute( "INSERT INTO `authtypes` (`name`, `desc`, `prop`, `authtype`) VALUES ( %s, %s, %s, %s )", [ authtypes[prop][0], authtypes[prop][1], authtypes[prop][2], authtypes[prop][3] ] )
 
         iter = 0
         id = None
