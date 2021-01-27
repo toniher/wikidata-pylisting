@@ -64,12 +64,12 @@ cur = conn.cursor()
 
 
 
-def printToWiki( toprint, site, targetpage ):
+def printToWiki( toprint, site, summary, targetpage ):
 
 	text = toprint
 
-	#page = site.pages[ targetpage ]
-	#page.save( text, summary='Bios', minor=False, bot=True )
+	page = site.pages[ targetpage ]
+	page.save( text, summary=summary, minor=False, bot=True )
 
 	return True
 
@@ -159,7 +159,7 @@ for idx, val in aut_id_freq_autcount.iteritems():
 
 text = text + "|}\n"
 
-text = text + "=== Pàgines només amb 1 autoritat ===\n\n"
+text = text + "\n=== Pàgines només amb 1 autoritat ===\n\n"
 
 # Seguiment
 # * Pagines només amb 1
@@ -168,25 +168,12 @@ text = text + "Nombre: " + str( aut_id_freq_aut1_count )
 
 # * Pàgines només amb 1 segons propietat
 aut_id_freq_aut1_freq = aut[ aut.id.isin( aut_id_freq_aut1.id.unique() ) ]["name"].value_counts()
-print( aut_id_freq_aut1_freq )
 
-# Posem en pàgines el de sota
-aut_orcid = aut[aut.name.eq("ORCID")]
-aut_viaf = aut[aut.name.eq("VIAF")]
-aut_cantic = aut[aut.name.eq("CANTIC")]
-aut_bne = aut[aut.name.eq("BNE")]
+text = text + "! Autoritat !! Recompte \n"
+for idx, val in aut_id_freq_aut1_freq.iteritems():
+	text = text + "| " + idx + " || " + str( val ) + "\n"
 
-# * Pàgines només amb ORCID
-aut_orcid1 = aut_orcid[aut_orcid.id.isin( aut_id_freq_aut1.id.unique() )]
-
-# * Pàgines només amb VIAF
-aut_viaf1 = aut_viaf[aut_viaf.id.isin( aut_id_freq_aut1.id.unique() )]
-
-# * Pàgines només amb CANTIC
-aut_cantic1 = aut_cantic[aut_cantic.id.isin( aut_id_freq_aut1.id.unique() )]
-
-# * Pàgines només amb BNE
-aut_bne1 = aut_bne[aut_bne.id.isin( aut_id_freq_aut1.id.unique() )]
+text = text + "|}\n"
 
 text = text + "\n== Plantilla d'autoritat==\n\n"
 
@@ -225,3 +212,23 @@ text = text + "** Sense autoritats: " + str( noplanaut_bios.shape[0] ) + "\n"
 
 
 print( text )
+
+printToWiki( text, site, "Actualització de recompte d'autoritats", targetpage )
+
+# Posem en pàgines el de sota
+aut_orcid = aut[aut.name.eq("ORCID")]
+aut_viaf = aut[aut.name.eq("VIAF")]
+aut_cantic = aut[aut.name.eq("CANTIC")]
+aut_bne = aut[aut.name.eq("BNE")]
+
+# * Pàgines només amb ORCID
+aut_orcid1 = aut_orcid[aut_orcid.id.isin( aut_id_freq_aut1.id.unique() )]
+
+# * Pàgines només amb VIAF
+aut_viaf1 = aut_viaf[aut_viaf.id.isin( aut_id_freq_aut1.id.unique() )]
+
+# * Pàgines només amb CANTIC
+aut_cantic1 = aut_cantic[aut_cantic.id.isin( aut_id_freq_aut1.id.unique() )]
+
+# * Pàgines només amb BNE
+aut_bne1 = aut_bne[aut_bne.id.isin( aut_id_freq_aut1.id.unique() )]
