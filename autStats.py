@@ -162,27 +162,37 @@ aut_cantic1 = aut_cantic[aut_cantic.id.isin( aut_id_freq_aut1.id.unique() )]
 # * Pàgines només amb BNE
 aut_bne1 = aut_bne[aut_bne.id.isin( aut_id_freq_aut1.id.unique() )]
 
+print("PLANTILLA")
 
 # * Total amb plantilla Autoritat
 # Amb algun registre
+print( "Amb registre" )
 planaut_aut = planaut[ planaut.id.isin(aut.id.unique()) ]
 print( planaut_aut.shape[0] )
+
 # Sense registre
+print( "Sense registre" )
 planaut_naut = planaut[ ~planaut.id.isin(aut.id.unique()) ]
 print( planaut_naut.shape[0] )
 
 # Sense base d'informació
+print( "Sende base info" )
 planaut_nbd = planaut[ ~planaut.id.isin(aut_bd.id.unique()) ]
 print( planaut_nbd.shape[0] )
 
+print("NO PLANTILLA")
+
 # Amb algun registre
+print( "Amb registre" )
 noplanaut_aut = aut[ ~aut.id.isin( planaut.id.unique() ) ]
 print( noplanaut_aut.shape[0] )
 
 # Sense cap registre
+print( "Sense registre" )
 noplanaut_bios = bios_noaut[ ~bios_noaut.id.isin( planaut.id.unique() ) ]
 print( noplanaut_bios.shape[0] )
 
 # Amb base d'informació
+print( "Sende base info" )
 noplanaut_bd = aut_bd[ ~aut_bd.id.isin( planaut.id.unique() ) ]
 print( noplanaut_bd.shape[0] )
