@@ -98,7 +98,6 @@ aut_freq = aut.groupby(by='name', as_index=False).agg({'id': pd.Series.nunique})
 
 print( bios_count )
 # print( planaut_count )
-print( aut_rg_bd_count )
 
 # TODO:
 # Stats
