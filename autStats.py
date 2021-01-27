@@ -99,7 +99,7 @@ aut_id_freq = aut.groupby(by='id', as_index=False).agg({'name': pd.Series.nuniqu
 aut_id_freq.columns = ['id', 'count']
 aut_id_freq = aut_id_freq.reset_index()
 
-aut_id_freq_aut = aut_id_freq.count.value_counts()
+aut_id_freq_aut = aut_id_freq["count"].value_counts()
 
 print( bios_count )
 # print( planaut_count )
