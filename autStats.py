@@ -62,6 +62,17 @@ if conn is None:
 
 cur = conn.cursor()
 
+
+
+def printToWiki( toprint, site, targetpage ):
+
+	text = toprint
+
+	#page = site.pages[ targetpage ]
+	#page.save( text, summary='Bios', minor=False, bot=True )
+
+	return True
+
 # Get all bios
 bios = pd.read_sql_query("SELECT w.id as id, w.article as article from `bios` b, `wikidata` w where b.article=w.article", conn)
 
@@ -98,13 +109,3 @@ print( aut_count )
 # * Pàgines només amb VIAF
 # * Pàgines només amb CANTIC
 # * Pàgines només amb BNE
-
-
-def printToWiki( toprint, site, targetpage ):
-
-        text = toprint
-
-		#page = site.pages[ targetpage ]
-		#page.save( text, summary='Bios', minor=False, bot=True )
-
-		return True
