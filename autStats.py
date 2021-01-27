@@ -240,8 +240,7 @@ text = text + "*** Amb bases d'informació: " + str( noplanaut_bd.shape[0] ) + "
 noplanaut_bios = bios_noaut[ ~bios_noaut.id.isin( planaut.id.unique() ) ]
 text = text + "** Sense autoritats: " + str( noplanaut_bios.shape[0] ) + "\n"
 
-
-printToWiki( text, site, "Actualització de recompte d'autoritats", autpage )
+text = text + "\n== Revisió ==\n\n"
 
 # Posem en pàgines el de sota
 # TODO: Generalitzar per tots els casos
@@ -279,3 +278,4 @@ printDfoWiki( bios_aut_bne1, site, "Actualització de recompte d'autoritats", au
 text = text + "\n* [[/BNE|BNE per revisar]]"
 
 print( text )
+printToWiki( text, site, "Actualització de recompte d'autoritats", autpage )
