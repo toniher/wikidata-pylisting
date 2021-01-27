@@ -92,7 +92,7 @@ aut_rg = aut[aut.authtype.eq(1)]
 # Entres amb bases d'informació
 aut_bd = aut[aut.authtype.eq(2)]
 
-auth_rg_bd = aut_rg[aut_rg.id in ( aut_bd.id ) ]
+auth_rg_bd = aut_rg[aut_rg.id.isin( aut_bd.id ) ]
 
 # Recompte entrades amb registre o base de dades
 aut_count = aut.id.nunique()
