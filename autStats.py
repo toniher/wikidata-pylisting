@@ -138,13 +138,15 @@ text = text + "*** Amb bases d'informació: " + str( aut_bd_count ) + "\n"
 # * Total amb bases i sense registre
 text = text + "**** Amb bases d'informació però sense registres de control: " + str( aut_bd_count - aut_rg_bd_count ) + "\n"
 
+text = text + "== Recompte per autoritats ==\n\n""
+
 # * Recompte per cada diferent propietat
 # print( aut_freq )
 text = text + "\n{| class='sortable'\n"
 
 text = text + "! Autoritat !! Recompte \n"
 for idx, val in aut_freq.iteritems():
-	text = text + "| " + idx + " || " + val + "\n"
+	text = text + "| " + idx + " || " + str( val ) + "\n"
 
 text = text + "|}\n"
 # * Pàgines segons nombre de propietats
@@ -153,14 +155,17 @@ text = text + "\n{| class='sortable'\n"
 
 text = text + "! Nombre d'autoritats !! Pàgines \n"
 for idx, val in aut_id_freq_autcount.iteritems():
-	text = text + "| " + idx + " || " + val + "\n"
+	text = text + "| " + str( idx ) + " || " + str( val ) + "\n"
 
 text = text + "|}\n"
+
+text = text + "=== Pàgines només amb 1 autoritat ===\n\n""
 
 # Seguiment
 # * Pagines només amb 1
 aut_id_freq_aut1_count = aut_id_freq_aut1.id.nunique()
-print( aut_id_freq_aut1_count )
+text = text + "Nombre: " + str( aut_id_freq_aut1_count )
+
 # * Pàgines només amb 1 segons propietat
 aut_id_freq_aut1_freq = aut[ aut.id.isin( aut_id_freq_aut1.id.unique() ) ]["name"].value_counts()
 print( aut_id_freq_aut1_freq )
