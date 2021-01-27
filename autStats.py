@@ -62,7 +62,16 @@ if conn is None:
 
 cur = conn.cursor()
 
+def formatWikidata( value ):
 
+	value = "[[:d:"+value+"|"+value+"]]"
+	return value
+
+def formatCawiki( value ):
+
+	text = value.replace("_", " ")
+	value = "[["+value+"|"+text+"]]"
+	return value
 
 def printToWiki( toprint, site, summary, targetpage ):
 
@@ -81,7 +90,7 @@ def printDfoWiki( df, site, summary, targetpage ):
 	text = text + "! id !! article \n"
 
 	for id, article in df.itertuples(index=False):
-		text = text + "|-\n| " + str(id) + " || " + str( article ) + "\n"
+		text = text + "|-\n| " + formatWikidata( str(id) ) + " || " + formatCawiki( str( article ) ) + "\n"
 
 	text = text + "|}\n"
 
@@ -232,11 +241,10 @@ noplanaut_bios = bios_noaut[ ~bios_noaut.id.isin( planaut.id.unique() ) ]
 text = text + "** Sense autoritats: " + str( noplanaut_bios.shape[0] ) + "\n"
 
 
-print( text )
-
 printToWiki( text, site, "Actualització de recompte d'autoritats", autpage )
 
 # Posem en pàgines el de sota
+# TODO: Generalitzar per tots els casos
 aut_orcid = aut[aut.name.eq("ORCID")]
 aut_viaf = aut[aut.name.eq("VIAF")]
 aut_cantic = aut[aut.name.eq("CANTIC")]
@@ -247,21 +255,27 @@ aut_orcid1 = aut_orcid[aut_orcid.id.isin( aut_id_freq_aut1.id.unique() )]
 bios_aut_orcid1 = aut_orcid1.merge( bios_aut, how="inner", on="id" )[["id", "article"]]
 
 printDfoWiki( bios_aut_orcid1, site, "Actualització de recompte d'autoritats", autpage+"/ORCID" )
+text = text + "\n* [[/ORCID|ORCID per revisar]]"
 
 # * Pàgines només amb VIAF
 aut_viaf1 = aut_viaf[aut_viaf.id.isin( aut_id_freq_aut1.id.unique() )]
 bios_aut_viaf1 = aut_viaf1.merge( bios_aut, how="inner", on="id" )[["id", "article"]]
 
 printDfoWiki( bios_aut_viaf1, site, "Actualització de recompte d'autoritats", autpage+"/VIAF" )
+text = text + "\n* [[/VIAF|VIAF per revisar]]"
 
 # * Pàgines només amb CANTIC
 aut_cantic1 = aut_cantic[aut_cantic.id.isin( aut_id_freq_aut1.id.unique() )]
 bios_aut_cantic1 = aut_cantic1.merge( bios_aut, how="inner", on="id" )[["id", "article"]]
 
 printDfoWiki( bios_aut_cantic1, site, "Actualització de recompte d'autoritats", autpage+"/CANTIC" )
+text = text + "\n* [[/CANTIC|CANTIC per revisar]]"
 
 # * Pàgines només amb BNE
 aut_bne1 = aut_bne[aut_bne.id.isin( aut_id_freq_aut1.id.unique() )]
 bios_aut_bne1 = aut_bne1.merge( bios_aut, how="inner", on="id" )[["id", "article"]]
 
 printDfoWiki( bios_aut_bne1, site, "Actualització de recompte d'autoritats", autpage+"/BNE" )
+text = text + "\n* [[/BNE|BNE per revisar]]"
+
+print( text )
