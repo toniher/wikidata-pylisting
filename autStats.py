@@ -66,15 +66,21 @@ cur = conn.cursor()
 bios = pd.read_sql_query("SELECT w.id as id, w.article as article from `bios` b, `wikidata` w where b.article=w.article", conn)
 
 # Plantilla whatlinks
-planaut = pd.read_sql_query("SELECT w.id as id, w.article as article from `whatlinks` l, `wikidata` w where l.article=w.article and l.against='Plantilla:Autoritat'", conn)
+# planaut = pd.read_sql_query("SELECT w.id as id, w.article as article from `whatlinks` l, `wikidata` w where l.article=w.article and l.against='Plantilla:Autoritat'", conn)
 
 # Entrades amb autoritat
 aut = pd.read_sql_query("SELECT a.id as id, a.authority as authority, t.name as name, t.authtype as authtype from `authorities` a, `wikidata` w, `authtypes` t where a.id=w.id and a.authority=t.prop", conn)
 
 bios_count = bios.shape[0]
-planaut_count = planaut.shape[0]
+# planaut_count = planaut.shape[0]
 
 biosaut = pd.merge(bios, aut, how='inner', on='id')
+
+aut_count = aut.id.nunique()
+
+print( bios_count )
+# print( planaut_count )
+print( aut_count )
 
 # TODO:
 # Stats
