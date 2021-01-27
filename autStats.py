@@ -146,13 +146,13 @@ aut_orcid1 = aut_orcid[aut_orcid.id.isin( aut_id_freq_aut1.id.unique() )]
 print( aut_orcid1.shape[0] )
 
 # * Pàgines només amb VIAF
-aut_viaf1 = aut_viaf1[aut_viaf1.id.isin( aut_id_freq_aut1.id.unique() )]
+aut_viaf1 = aut_viaf[aut_viaf.id.isin( aut_id_freq_aut1.id.unique() )]
 print( aut_viaf1.shape[0] )
 
 # * Pàgines només amb CANTIC
-aut_cantic1 = aut_cantic1[aut_cantic1.id.isin( aut_id_freq_aut1.id.unique() )]
+aut_cantic1 = aut_cantic[aut_cantic.id.isin( aut_id_freq_aut1.id.unique() )]
 print( aut_cantic1.shape[0] )
 
 # * Pàgines només amb BNE
-aut_bne1 = aut_bne1[aut_bne1.id.isin( aut_id_freq_aut1.id.unique() )]
+aut_bne1 = aut_bne[aut_bne.id.isin( aut_id_freq_aut1.id.unique() )]
 print( aut_bne1.shape[0] )
