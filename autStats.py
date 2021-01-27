@@ -92,9 +92,9 @@ aut_rg = aut[aut.authtype.eq(1)]
 # Entres amb bases d'informació
 aut_bd = aut[aut.authtype.eq(2)]
 
-auth_rg_bd = aut_rg[aut_rg.id.isin( aut_bd.id.unique() ) ]
+aut_rg_bd = aut_rg[aut_rg.id.isin( aut_bd.id.unique() ) ]
 
-auth_freq = auth.groupby(by='name', as_index=False).agg({'id': pd.Series.nunique})
+aut_freq = aut.groupby(by='name', as_index=False).agg({'id': pd.Series.nunique})
 
 print( bios_count )
 # print( planaut_count )
@@ -112,7 +112,7 @@ print( aut_rg_count )
 aut_bd_count = aut_bd.id.nunique()
 print( aut_bd_count )
 # * Total amb registres autoritat i bases
-aut_rg_bd_count = auth_rg_bd.id.nunique()
+aut_rg_bd_count = aut_rg_bd.id.nunique()
 print( aut_rg_bd_count )
 # * Total amb registre i sense base
 print( aut_rg_count - aut_rg_bd_count )
@@ -123,7 +123,7 @@ print( aut_bd_count - aut_rg_bd_count )
 # * Total sense plantilla Autoritat (amb algun registre, sense, autoritat, informació)
 # * Recompte per cada diferent propietat
 # * Pàgines segons nombre de propietats
-print( auth_freq )
+print( aut_freq )
 # Seguiment
 # * Pàgines només amb ORCID
 # * Pàgines només amb VIAF
