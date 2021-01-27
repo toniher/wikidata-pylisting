@@ -94,7 +94,8 @@ aut_bd = aut[aut.authtype.eq(2)]
 
 aut_rg_bd = aut_rg[aut_rg.id.isin( aut_bd.id.unique() ) ]
 
-aut_freq = aut.groupby(by='name', as_index=False).agg({'id': pd.Series.nunique})
+aut_freq = aut.name.value_counts()
+#aut_freq = aut.groupby(by='name', as_index=False).agg({'id': pd.Series.nunique})
 
 print( bios_count )
 # print( planaut_count )
