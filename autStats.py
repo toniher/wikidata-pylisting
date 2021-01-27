@@ -77,15 +77,10 @@ def printToWiki( toprint, site, targetpage ):
 bios = pd.read_sql_query("SELECT w.id as id, w.article as article from `bios` b, `wikidata` w where b.article=w.article", conn)
 
 # Plantilla whatlinks
-# planaut = pd.read_sql_query("SELECT w.id as id, w.article as article from `whatlinks` l, `wikidata` w where l.article=w.article and l.against='Plantilla:Autoritat'", conn)
+planaut = pd.read_sql_query("SELECT w.id as id, w.article as article from `whatlinks` l, `wikidata` w where l.article=w.article and l.against='Plantilla:Autoritat'", conn)
 
 # Entrades amb autoritat
 aut = pd.read_sql_query("SELECT a.id as id, a.authority as authority, t.name as name, t.authtype as authtype from `authorities` a, `wikidata` w, `authtypes` t where a.id=w.id and a.authority=t.prop", conn)
-
-bios_count = bios.shape[0]
-# planaut_count = planaut.shape[0]
-
-biosaut = pd.merge(bios, aut, how='inner', on='id')
 
 # Entrades amb registres
 aut_rg = aut[aut.authtype.eq(1)]
@@ -93,6 +88,19 @@ aut_rg = aut[aut.authtype.eq(1)]
 aut_bd = aut[aut.authtype.eq(2)]
 
 aut_rg_bd = aut_rg[aut_rg.id.isin( aut_bd.id.unique() ) ]
+
+
+bios_count = bios.shape[0]
+
+# Bios with authority
+bios_aut = bios[bios.id.isin(aut.id.unique())]
+
+# Bios without authority
+bios_noaut = bios[~bios.id.isin(aut.id.unique())]
+
+# Bios without bd
+bios_nobd = bios[~bios.id.isin(autbd.id.unique())]
+
 
 aut_freq = aut.name.value_counts()
 aut_id_freq = aut.groupby(by='id', as_index=False).agg({'name': pd.Series.nunique})
@@ -124,8 +132,6 @@ print( aut_rg_count - aut_rg_bd_count )
 # * Total amb bases i sense registre
 print( aut_bd_count - aut_rg_bd_count )
 
-# * Total amb plantilla Autoritat (amb algun registre, sense, autoritat, informació)
-# * Total sense plantilla Autoritat (amb algun registre, sense, autoritat, informació)
 # * Recompte per cada diferent propietat
 print( aut_freq )
 # * Pàgines segons nombre de propietats
@@ -139,6 +145,7 @@ print( aut_id_freq_aut1_count )
 aut_id_freq_aut1_freq = aut[ aut.id.isin( aut_id_freq_aut1.id.unique() ) ]["name"].value_counts()
 print( aut_id_freq_aut1_freq )
 
+# Posem en pàgines el de sota
 aut_orcid = aut[aut.name.eq("ORCID")]
 aut_viaf = aut[aut.name.eq("VIAF")]
 aut_cantic = aut[aut.name.eq("CANTIC")]
@@ -146,16 +153,37 @@ aut_bne = aut[aut.name.eq("BNE")]
 
 # * Pàgines només amb ORCID
 aut_orcid1 = aut_orcid[aut_orcid.id.isin( aut_id_freq_aut1.id.unique() )]
-print( aut_orcid1.shape[0] )
 
 # * Pàgines només amb VIAF
 aut_viaf1 = aut_viaf[aut_viaf.id.isin( aut_id_freq_aut1.id.unique() )]
-print( aut_viaf1.shape[0] )
 
 # * Pàgines només amb CANTIC
 aut_cantic1 = aut_cantic[aut_cantic.id.isin( aut_id_freq_aut1.id.unique() )]
-print( aut_cantic1.shape[0] )
 
 # * Pàgines només amb BNE
 aut_bne1 = aut_bne[aut_bne.id.isin( aut_id_freq_aut1.id.unique() )]
-print( aut_bne1.shape[0] )
+
+
+# * Total amb plantilla Autoritat
+# Amb algun registre
+planaut_aut = planaut[ planaut.id.isin(aut.id.unique()) ]
+print( planaut_aut.shape[0] )
+# Sense registre
+planaut_naut = planaut[ ~planaut.id.isin(aut.id.unique()) ]
+print( planaut_naut.shape[0] )
+
+# Sense base d'informació
+planaut_nbd = planaut[ ~planaut.id.isin(aut_bd.id.unique()) ]
+print( planaut_nbd.shape[0] )
+
+# Amb algun registre
+noplanaut_aut = aut[ ~aut.id.isin( planaut.id.unique() ) ]
+print( noplanaut_aut.shape[0] )
+
+# Sense cap registre
+noplanaut_bios = bios_noaut[ ~bios_noaut.id.isin( planaut.id.unique() ) ]
+print( noplanaut_bios.shape[0] )
+
+# Amb base d'informació
+noplanaut_bd = aut_bd[ ~aut_bd.id.isin( planaut.id.unique() ) ]
+print( noplanaut_bd.shape[0] )
