@@ -99,7 +99,8 @@ aut_id_freq = aut.groupby(by='id', as_index=False).agg({'name': pd.Series.nuniqu
 aut_id_freq.columns = ['id', 'count']
 aut_id_freq = aut_id_freq.reset_index()
 
-aut_id_freq_aut = aut_id_freq["count"].value_counts()
+aut_id_freq_autcount = aut_id_freq["count"].value_counts()
+aut_id_freq_aut1 = aut_id_freq[aut_id_freq["count"].eq(1)]
 
 print( bios_count )
 # print( planaut_count )
@@ -128,9 +129,13 @@ print( aut_bd_count - aut_rg_bd_count )
 # * Recompte per cada diferent propietat
 print( aut_freq )
 # * Pàgines segons nombre de propietats
-print( aut_id_freq_aut )
+print( aut_id_freq_autcount )
 
 # Seguiment
+# * Pagines només amb 1
+aut_id_freq_aut1_count = aut_id_freq_aut1.id.nunique()
+print( aut_id_freq_aut1_count )
+
 # * Pàgines només amb ORCID
 # * Pàgines només amb VIAF
 # * Pàgines només amb CANTIC
