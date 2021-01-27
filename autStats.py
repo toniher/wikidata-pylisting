@@ -146,7 +146,7 @@ text = text + "\n{| class='sortable'\n"
 
 text = text + "! Autoritat !! Recompte \n"
 for idx, val in aut_freq.iteritems():
-	text = text + "| " + idx + " || " + str( val ) + "\n"
+	text = text + "|-\n| " + idx + " || " + str( val ) + "\n"
 
 text = text + "|}\n"
 # * Pàgines segons nombre de propietats
@@ -155,7 +155,7 @@ text = text + "\n{| class='sortable'\n"
 
 text = text + "! Nombre d'autoritats !! Pàgines \n"
 for idx, val in aut_id_freq_autcount.iteritems():
-	text = text + "| " + str( idx ) + " || " + str( val ) + "\n"
+	text = text + "|-\n| " + str( idx ) + " || " + str( val ) + "\n"
 
 text = text + "|}\n"
 
@@ -171,7 +171,7 @@ aut_id_freq_aut1_freq = aut[ aut.id.isin( aut_id_freq_aut1.id.unique() ) ]["name
 
 text = text + "! Autoritat !! Recompte \n"
 for idx, val in aut_id_freq_aut1_freq.iteritems():
-	text = text + "| " + idx + " || " + str( val ) + "\n"
+	text = text + "|-\n| " + idx + " || " + str( val ) + "\n"
 
 text = text + "|}\n"
 
@@ -198,6 +198,8 @@ planaut_nbd = planaut[ ~planaut.id.isin(aut_bd.id.unique()) ]
 text = text + "*** Sense bases d'informació: " + str( planaut_nbd.shape[0] ) + "\n"
 
 text = text + "\n=== Plantilla no inclosa ===\n\n"
+
+text = text + "* Nombre d'articles: " + str( bios_count - planaut_count ) + "\n"
 
 # Amb algun registre
 noplanaut_aut = aut[ ~aut.id.isin( planaut.id.unique() ) ]
