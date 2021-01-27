@@ -73,6 +73,15 @@ def printToWiki( toprint, site, summary, targetpage ):
 
 	return True
 
+def printDfoWiki( df, columns, site, summary, targetpage ):
+
+	text = toprint
+
+	page = site.pages[ targetpage ]
+	page.save( text, summary=summary, minor=False, bot=True )
+
+	return True
+
 # Get all bios
 bios = pd.read_sql_query("SELECT w.id as id, w.article as article from `bios` b, `wikidata` w where b.article=w.article", conn)
 
@@ -142,7 +151,7 @@ text = text + "== Recompte per autoritats ==\n\n"
 
 # * Recompte per cada diferent propietat
 # print( aut_freq )
-text = text + "\n{| class='sortable'\n"
+text = text + "\n{| class='wikitable sortable'\n"
 
 text = text + "! Autoritat !! Recompte \n"
 for idx, val in aut_freq.iteritems():
@@ -151,7 +160,7 @@ for idx, val in aut_freq.iteritems():
 text = text + "|}\n"
 # * Pàgines segons nombre de propietats
 
-text = text + "\n{| class='sortable'\n"
+text = text + "\n{| class='wikitable sortable'\n"
 
 text = text + "! Nombre d'autoritats !! Pàgines \n"
 for idx, val in aut_id_freq_autcount.iteritems():
@@ -168,6 +177,8 @@ text = text + "Nombre: " + str( aut_id_freq_aut1_count )
 
 # * Pàgines només amb 1 segons propietat
 aut_id_freq_aut1_freq = aut[ aut.id.isin( aut_id_freq_aut1.id.unique() ) ]["name"].value_counts()
+
+text = text + "\n{| class='wikitable sortable'\n"
 
 text = text + "! Autoritat !! Recompte \n"
 for idx, val in aut_id_freq_aut1_freq.iteritems():
@@ -225,12 +236,19 @@ aut_bne = aut[aut.name.eq("BNE")]
 
 # * Pàgines només amb ORCID
 aut_orcid1 = aut_orcid[aut_orcid.id.isin( aut_id_freq_aut1.id.unique() )]
+bios_aut_orcid1 = aut_orcid1.merge( bios_aut, how="inner", on="id" )["id", "article"]
+
+for idx, val in bios_aut_orcid1.iteritems():
+	print( str(val["id"]) + " - " + str(val["article"]) )
 
 # * Pàgines només amb VIAF
 aut_viaf1 = aut_viaf[aut_viaf.id.isin( aut_id_freq_aut1.id.unique() )]
+bios_aut_viaf1 = aut_viaf1.merge( bios_aut, how="inner", on="id" )
 
 # * Pàgines només amb CANTIC
 aut_cantic1 = aut_cantic[aut_cantic.id.isin( aut_id_freq_aut1.id.unique() )]
+bios_aut_cantic1 = aut_cantic1.merge( bios_aut, how="inner", on="id" )
 
 # * Pàgines només amb BNE
 aut_bne1 = aut_bne[aut_bne.id.isin( aut_id_freq_aut1.id.unique() )]
+bios_aut_bne1 = aut_bne1.merge( bios_aut, how="inner", on="id" )
