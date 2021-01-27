@@ -136,8 +136,13 @@ aut_id_freq = aut_id_freq.reset_index()
 aut_id_freq_autcount = aut_id_freq["count"].value_counts()
 aut_id_freq_aut1 = aut_id_freq[aut_id_freq["count"].eq(1)]
 
+nota = """IMPORTANT: Els nombres són aproximats, perquè les fonts d'autoritats (recollides processant Wikidata)
+no s'actualitzen tant sovint com la resta de fonts."""
+
+text = nota + "\n\n"
+
 # Prepare text
-text = "== General de biografies ==\n\n"
+text = text + "== General de biografies ==\n\n"
 
 text = text + "* Total: " + str( bios_count ) + "\n"
 
