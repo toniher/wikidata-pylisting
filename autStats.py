@@ -99,7 +99,7 @@ bios_aut = bios[bios.id.isin(aut.id.unique())]
 bios_noaut = bios[~bios.id.isin(aut.id.unique())]
 
 # Bios without bd
-bios_nobd = bios[~bios.id.isin(autbd.id.unique())]
+bios_nobd = bios[~bios.id.isin(aut_bd.id.unique())]
 
 
 aut_freq = aut.name.value_counts()
@@ -111,7 +111,6 @@ aut_id_freq_autcount = aut_id_freq["count"].value_counts()
 aut_id_freq_aut1 = aut_id_freq[aut_id_freq["count"].eq(1)]
 
 print( bios_count )
-# print( planaut_count )
 
 # TODO:
 # Stats
