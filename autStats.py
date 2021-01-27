@@ -95,7 +95,7 @@ aut_bd = aut[aut.authtype.eq(2)]
 aut_rg_bd = aut_rg[aut_rg.id.isin( aut_bd.id.unique() ) ]
 
 aut_freq = aut.name.value_counts()
-#aut_freq = aut.groupby(by='name', as_index=False).agg({'id': pd.Series.nunique})
+aut_id_freq = aut.group(by='id', as_index=False).agg({'count': pd.Series.nunique}).group(by='count', as_index=False )
 
 print( bios_count )
 # print( planaut_count )
@@ -122,8 +122,9 @@ print( aut_bd_count - aut_rg_bd_count )
 # * Total amb plantilla Autoritat (amb algun registre, sense, autoritat, informació)
 # * Total sense plantilla Autoritat (amb algun registre, sense, autoritat, informació)
 # * Recompte per cada diferent propietat
-# * Pàgines segons nombre de propietats
 print( aut_freq )
+# * Pàgines segons nombre de propietats
+
 # Seguiment
 # * Pàgines només amb ORCID
 # * Pàgines només amb VIAF
