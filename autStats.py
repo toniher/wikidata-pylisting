@@ -136,7 +136,23 @@ print( aut_id_freq_autcount )
 aut_id_freq_aut1_count = aut_id_freq_aut1.id.nunique()
 print( aut_id_freq_aut1_count )
 
+aut_orcid = aut[aut.name.eq("ORCID")]
+aut_viaf = aut[aut.name.eq("VIAF")]
+aut_cantic = aut[aut.name.eq("CANTIC")]
+aut_bne = aut[aut.name.eq("BNE")]
+
 # * Pàgines només amb ORCID
+aut_orcid1 = aut_orcid[aut_orcid.id.isin( aut_id_freq_aut1.id.unique() )]
+print( aut_orcid1.shape() )
+
 # * Pàgines només amb VIAF
+aut_viaf1 = aut_viaf1[aut_viaf1.id.isin( aut_id_freq_aut1.id.unique() )]
+print( aut_viaf1.shape() )
+
 # * Pàgines només amb CANTIC
+aut_cantic1 = aut_cantic1[aut_cantic1.id.isin( aut_id_freq_aut1.id.unique() )]
+print( aut_cantic1 )
+
 # * Pàgines només amb BNE
+aut_bne1 = aut_bne1[aut_bne1.id.isin( aut_id_freq_aut1.id.unique() )]
+print( aut_bne1 )
