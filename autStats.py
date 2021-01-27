@@ -73,9 +73,17 @@ def printToWiki( toprint, site, summary, targetpage ):
 
 	return True
 
-def printDfoWiki( df, columns, site, summary, targetpage ):
+def printDfoWiki( df, site, summary, targetpage ):
 
-	text = toprint
+	text = ""
+	text = text + "\n{| class='wikitable sortable'\n"
+
+	text = text + "! id !! article \n"
+
+	for id, article in df.itertuples(index=False):
+		text = text + "|-\n| " + str(id) + " || " + str( article ) + "\n"
+
+	text = text + "|}\n"
 
 	page = site.pages[ targetpage ]
 	page.save( text, summary=summary, minor=False, bot=True )
@@ -236,19 +244,24 @@ aut_bne = aut[aut.name.eq("BNE")]
 
 # * Pàgines només amb ORCID
 aut_orcid1 = aut_orcid[aut_orcid.id.isin( aut_id_freq_aut1.id.unique() )]
-bios_aut_orcid1 = aut_orcid1.merge( bios_aut, how="inner", on="id" )["id", "article"]
+bios_aut_orcid1 = aut_orcid1.merge( bios_aut, how="inner", on="id" )[["id", "article"]]
 
-for idx, val in bios_aut_orcid1.iteritems():
-	print( str(val["id"]) + " - " + str(val["article"]) )
+printDfoWiki( bios_aut_orcid1, site, "Actualització de recompte d'autoritats", autpage+"/ORCID" )
 
 # * Pàgines només amb VIAF
 aut_viaf1 = aut_viaf[aut_viaf.id.isin( aut_id_freq_aut1.id.unique() )]
-bios_aut_viaf1 = aut_viaf1.merge( bios_aut, how="inner", on="id" )
+bios_aut_viaf1 = aut_viaf1.merge( bios_aut, how="inner", on="id" )[["id", "article"]]
+
+printDfoWiki( bios_aut_viaf1, site, "Actualització de recompte d'autoritats", autpage+"/VIAF" )
 
 # * Pàgines només amb CANTIC
 aut_cantic1 = aut_cantic[aut_cantic.id.isin( aut_id_freq_aut1.id.unique() )]
-bios_aut_cantic1 = aut_cantic1.merge( bios_aut, how="inner", on="id" )
+bios_aut_cantic1 = aut_cantic1.merge( bios_aut, how="inner", on="id" )[["id", "article"]]
+
+printDfoWiki( bios_aut_cantic1, site, "Actualització de recompte d'autoritats", autpage+"/CANTIC" )
 
 # * Pàgines només amb BNE
 aut_bne1 = aut_bne[aut_bne.id.isin( aut_id_freq_aut1.id.unique() )]
-bios_aut_bne1 = aut_bne1.merge( bios_aut, how="inner", on="id" )
+bios_aut_bne1 = aut_bne1.merge( bios_aut, how="inner", on="id" )[["id", "article"]]
+
+printDfoWiki( bios_aut_bne1, site, "Actualització de recompte d'autoritats", autpage+"/BNE" )
