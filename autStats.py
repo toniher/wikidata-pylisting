@@ -124,6 +124,7 @@ print( aut_bd_count - aut_rg_bd_count )
 # * Recompte per cada diferent propietat
 print( aut_freq )
 # * Pàgines segons nombre de propietats
+print( aut_id_freq )
 
 # Seguiment
 # * Pàgines només amb ORCID
