@@ -122,21 +122,21 @@ text = text + "** Amb autoritats: " + str( aut_count ) + "\n"
 
 # * Total amb registres Autoritat
 aut_rg_count = aut_rg.id.nunique()
-text = text + "** Amb registres de control: " + str( aut_rg_count ) + "\n"
-
-# * Total amb bases d'informació
-aut_bd_count = aut_bd.id.nunique()
-text = text + "** Amb bases d'informació: " + str( aut_bd_count ) + "\n"
+text = text + "*** Amb registres de control: " + str( aut_rg_count ) + "\n"
 
 # * Total amb registres autoritat i bases
 aut_rg_bd_count = aut_rg_bd.id.nunique()
-text = text + "** Amb registres de control i també bases d'informació: " + str( aut_rg_bd_count ) + "\n"
+text = text + "**** Amb registres de control i també bases d'informació: " + str( aut_rg_bd_count ) + "\n"
 
 # * Total amb registre i sense base
-text = text + "** Amb registres de control però sense bases d'informació: " + str( aut_rg_count - aut_rg_bd_count ) + "\n"
+text = text + "**** Amb registres de control però sense bases d'informació: " + str( aut_rg_count - aut_rg_bd_count ) + "\n"
+
+# * Total amb bases d'informació
+aut_bd_count = aut_bd.id.nunique()
+text = text + "*** Amb bases d'informació: " + str( aut_bd_count ) + "\n"
 
 # * Total amb bases i sense registre
-text = text + "** Sense registres de control però amb bases d'informació: " + str( aut_bd_count - aut_rg_bd_count ) + "\n"
+text = text + "**** Amb bases d'informació però sense registres de control: " + str( aut_bd_count - aut_rg_bd_count ) + "\n"
 
 # * Recompte per cada diferent propietat
 print( aut_freq )
@@ -169,11 +169,11 @@ aut_cantic1 = aut_cantic[aut_cantic.id.isin( aut_id_freq_aut1.id.unique() )]
 # * Pàgines només amb BNE
 aut_bne1 = aut_bne[aut_bne.id.isin( aut_id_freq_aut1.id.unique() )]
 
-text = text + "== Plantilla d'autoritat==\n\n"
+text = text + "\n== Plantilla d'autoritat==\n\n"
 
 planaut_count = planaut.shape[0]
 
-text = text + "=== Plantilla inclosa ===\n\n"
+text = text + "\n=== Plantilla inclosa ===\n\n"
 
 text = text + "* Nombre d'articles: " + str( planaut_count ) + "\n"
 
@@ -181,28 +181,28 @@ text = text + "* Nombre d'articles: " + str( planaut_count ) + "\n"
 # Amb algun registre
 planaut_aut = planaut[ planaut.id.isin(aut.id.unique()) ]
 
-text = text + "** Amb autoritats: " + str( planaut_aut.shape[0] )
+text = text + "** Amb autoritats: " + str( planaut_aut.shape[0] ) + "\n"
 
 # Sense registre
 planaut_naut = planaut[ ~planaut.id.isin(aut.id.unique()) ]
-text = text + "** Sense autoritats: " + str( planaut_naut.shape[0] )
+text = text + "** Sense autoritats: " + str( planaut_naut.shape[0] ) + "\n"
 
 # Sense base d'informació
 planaut_nbd = planaut[ ~planaut.id.isin(aut_bd.id.unique()) ]
-text = text + "*** Sense bases d'informació: " + str( planaut_nbd.shape[0] )
+text = text + "*** Sense bases d'informació: " + str( planaut_nbd.shape[0] ) + "\n"
 
-text = text + "=== Plantilla no inclosa ===\n\n"
+text = text + "\n=== Plantilla no inclosa ===\n\n"
 
 # Amb algun registre
 noplanaut_aut = aut[ ~aut.id.isin( planaut.id.unique() ) ]
-text = text + "** Amb autoritats: " + str( noplanaut_aut.shape[0] )
+text = text + "** Amb autoritats: " + str( noplanaut_aut.shape[0] ) + "\n"
 noplanaut_bd = aut_bd[ ~aut_bd.id.isin( planaut.id.unique() ) ]
 
-text = text + "*** Amb bases d'informació: " + str( noplanaut_bd.shape[0] )
+text = text + "*** Amb bases d'informació: " + str( noplanaut_bd.shape[0] ) + "\n"
 
 # Sense cap registre
 noplanaut_bios = bios_noaut[ ~bios_noaut.id.isin( planaut.id.unique() ) ]
-text = text + "** Sense autoritats: " + str( noplanaut_bios.shape[0] )
+text = text + "** Sense autoritats: " + str( noplanaut_bios.shape[0] ) + "\n"
 
 
 print( text )
