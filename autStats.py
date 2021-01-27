@@ -139,9 +139,23 @@ text = text + "*** Amb bases d'informació: " + str( aut_bd_count ) + "\n"
 text = text + "**** Amb bases d'informació però sense registres de control: " + str( aut_bd_count - aut_rg_bd_count ) + "\n"
 
 # * Recompte per cada diferent propietat
-print( aut_freq )
+# print( aut_freq )
+text = text + "\n{| class='sortable'\n"
+
+text = text + "! Autoritat !! Recompte \n"
+for idx, val in aut_freq.iteritems():
+	text = text + "| " + idx + " || " + val + "\n"
+
+text = text + "|}\n"
 # * Pàgines segons nombre de propietats
-print( aut_id_freq_autcount )
+
+text = text + "\n{| class='sortable'\n"
+
+text = text + "! Nombre d'autoritats !! Pàgines \n"
+for idx, val in aut_id_freq_autcount.iteritems():
+	text = text + "| " + idx + " || " + val + "\n"
+
+text = text + "|}\n"
 
 # Seguiment
 # * Pagines només amb 1
