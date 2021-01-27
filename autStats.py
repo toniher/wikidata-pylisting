@@ -26,7 +26,7 @@ user = None
 password = None
 protocol = "https"
 data = {}
-targetpage = "User:Toniher/Autoritats"
+autpage = "User:Toniher/Autoritats"
 
 conn = None
 
@@ -48,8 +48,8 @@ if "mw" in data:
 if "mysql" in data:
 	conn = MySQLdb.connect(host=data["mysql"]["host"], user=data["mysql"]["user"], passwd=data["mysql"]["password"], db=data["mysql"]["database"], use_unicode=True, charset='utf8mb4', init_command='SET NAMES utf8mb4')
 
-if "targetpage" in data:
-		targetpage = data["targetpage"]
+if "autpage" in data:
+		autpage = data["autpage"]
 
 site = mwclient.Site(host, scheme=protocol)
 if user and pwd :
@@ -213,7 +213,7 @@ text = text + "** Sense autoritats: " + str( noplanaut_bios.shape[0] ) + "\n"
 
 print( text )
 
-printToWiki( text, site, "Actualització de recompte d'autoritats", targetpage )
+printToWiki( text, site, "Actualització de recompte d'autoritats", autpage )
 
 # Posem en pàgines el de sota
 aut_orcid = aut[aut.name.eq("ORCID")]
