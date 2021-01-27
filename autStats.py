@@ -110,26 +110,35 @@ aut_id_freq = aut_id_freq.reset_index()
 aut_id_freq_autcount = aut_id_freq["count"].value_counts()
 aut_id_freq_aut1 = aut_id_freq[aut_id_freq["count"].eq(1)]
 
-print( bios_count )
+# Prepare text
+text = "== General de biografies ==\n\n"
 
-# TODO:
+text = text + "* Total: " + str( bios_count ) + "\n"
+
 # Stats
 # * Total amb registres Autoritat i bases
 aut_count = aut.id.nunique()
-print( aut_count )
+text = text + "* Amb autoritats: " + str( aut_count ) + "\n"
+
 # * Total amb registres Autoritat
 aut_rg_count = aut_rg.id.nunique()
-print( aut_rg_count )
+text = text + "* Amb registres de control: " + str( aut_rg_count ) + "\n"
+
 # * Total amb bases d'informació
 aut_bd_count = aut_bd.id.nunique()
-print( aut_bd_count )
+text = text + "* Amb bases d'informació: " + str( aut_rg_count ) + "\n"
+
 # * Total amb registres autoritat i bases
 aut_rg_bd_count = aut_rg_bd.id.nunique()
-print( aut_rg_bd_count )
+text = text + "* Amb registres de control i també bases d'informació: " + str( aut_rg_bd_count ) + "\n"
+
 # * Total amb registre i sense base
-print( aut_rg_count - aut_rg_bd_count )
+text = text + "* Amb registres de control però sense bases d'informació: " + str( aut_rg_count - aut_rg_bd_count ) + "\n"
+
 # * Total amb bases i sense registre
-print( aut_bd_count - aut_rg_bd_count )
+text = text + "* Sense registres de control però amb bases d'informació: " + str( aut_bd_count - aut_rg_bd_count ) + "\n"
+
+print( text )
 
 # * Recompte per cada diferent propietat
 print( aut_freq )
