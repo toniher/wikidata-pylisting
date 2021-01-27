@@ -87,11 +87,23 @@ bios_count = bios.shape[0]
 
 biosaut = pd.merge(bios, aut, how='inner', on='id')
 
+# Entrades amb registres
+aut_rg = aut[aut.authtype.eq(1)]
+# Entres amb bases d'informació
+aut_bd = aut[aut.authtype.eq(2)]
+
+auth_rg_bd = aut_rg[aut_rg.id in ( aut_bd.id ) ]
+
+# Recompte entrades amb registre o base de dades
 aut_count = aut.id.nunique()
+
+# Recompte rg i bd
+aut_rg_bd_count = auth_rg_bd.id.nunique()
 
 print( bios_count )
 # print( planaut_count )
 print( aut_count )
+print( aut_rg_bd_count )
 
 # TODO:
 # Stats
