@@ -138,7 +138,7 @@ text = text + "*** Amb bases d'informació: " + str( aut_bd_count ) + "\n"
 # * Total amb bases i sense registre
 text = text + "**** Amb bases d'informació però sense registres de control: " + str( aut_bd_count - aut_rg_bd_count ) + "\n"
 
-text = text + "== Recompte per autoritats ==\n\n""
+text = text + "== Recompte per autoritats ==\n\n"
 
 # * Recompte per cada diferent propietat
 # print( aut_freq )
