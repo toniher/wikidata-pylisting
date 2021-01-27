@@ -135,6 +135,9 @@ print( aut_id_freq_autcount )
 # * Pagines només amb 1
 aut_id_freq_aut1_count = aut_id_freq_aut1.id.nunique()
 print( aut_id_freq_aut1_count )
+# * Pàgines només amb 1 segons propietat
+aut_id_freq_aut1_freq = aut[ aut.id.isin( aut_id_freq_aut1.id.unique() ) ]["name"].value_counts()
+print( aut_id_freq_aut1_freq )
 
 aut_orcid = aut[aut.name.eq("ORCID")]
 aut_viaf = aut[aut.name.eq("VIAF")]
