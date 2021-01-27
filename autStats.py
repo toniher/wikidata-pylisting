@@ -159,7 +159,7 @@ for idx, val in aut_id_freq_autcount.iteritems():
 
 text = text + "|}\n"
 
-text = text + "=== Pàgines només amb 1 autoritat ===\n\n""
+text = text + "=== Pàgines només amb 1 autoritat ===\n\n"
 
 # Seguiment
 # * Pagines només amb 1
