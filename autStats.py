@@ -137,7 +137,7 @@ aut_id_freq_autcount = aut_id_freq["count"].value_counts()
 aut_id_freq_aut1 = aut_id_freq[aut_id_freq["count"].eq(1)]
 
 nota = """IMPORTANT: Els nombres són aproximats, perquè les fonts d'autoritats (recollides processant Wikidata)
-no s'actualitzen tant sovint com la resta de fonts."""
+no s'actualitzen tant sovint com la resta de fonts (biografies de Wikidata i pàgines amb plantilla d'autoritats)."""
 
 text = nota + "\n\n"
 
