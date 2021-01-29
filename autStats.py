@@ -186,7 +186,7 @@ for idx, val in aut_freq.iteritems():
 
 text = text + "|}\n"
 
-text = text + "{{Graph:Chart|width=600|height=200|type=rect|legend=Llegenda|x="+",".join(chartx)+"|y="+",".join(charty)+"|showValues=}}\n"
+text = text + "{{Graph:Chart|width=600|height=200|type=rect|xAxisAngle = -40|x="+",".join(chartx)+"|y="+",".join(charty)+"|showValues=}}\n"
 # * Pàgines segons nombre de propietats
 
 text = text + "=== Nombre d'autoritats diferents per pàgina ===\n"
@@ -208,7 +208,7 @@ chartx.sort()
 for i in chartx :
 	charty.append( chartxy[str(i)] )
 
-text = text + "{{Graph:Chart|width=600|height=200|type=rect|legend=Llegenda|x="+",".join(map(lambda x: str(x), chartx))+"|y="+",".join(charty)+"|showValues=}}\n"
+text = text + "{{Graph:Chart|width=600|height=200|type=rect|x="+",".join(map(lambda x: str(x), chartx))+"|y="+",".join(charty)+"|showValues=}}\n"
 
 text = text + "\n=== Pàgines només amb 1 autoritat ===\n\n"
 
