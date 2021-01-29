@@ -171,16 +171,25 @@ text = text + "**** Amb bases d'informació però sense registres de control: " 
 
 text = text + "== Recompte per autoritats ==\n\n"
 
+text = text + "=== Nombre d'autoritats ===\n"
 # * Recompte per cada diferent propietat
 # print( aut_freq )
 text = text + "\n{| class='wikitable sortable'\n"
 
+chartx = []
+charty = []
 text = text + "! Autoritat !! Recompte \n"
 for idx, val in aut_freq.iteritems():
+	chartx.append( idx )
+	charty.append( str( val ) )
 	text = text + "|-\n| " + idx + " || " + str( val ) + "\n"
 
 text = text + "|}\n"
+
+text = text + "{{Graph:Chart|width=600|height=200|type=rect|legend=Llegenda|x="+chartx.join(",")+"|y="+charty.join(",")+"|showValues=}}\n"
 # * Pàgines segons nombre de propietats
+
+text = text + "=== Nombre d'autoritats diferents per pàgina ===\n"
 
 text = text + "\n{| class='wikitable sortable'\n"
 
