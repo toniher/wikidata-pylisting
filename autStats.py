@@ -191,17 +191,24 @@ text = text + "{{Graph:Chart|width=600|height=200|type=rect|legend=Llegenda|x="+
 
 text = text + "=== Nombre d'autoritats diferents per pàgina ===\n"
 
+chartx = []
+charty = []
 chartxy = []
 text = text + "\n{| class='wikitable sortable'\n"
 
 text = text + "! Nombre d'autoritats !! Pàgines \n"
 for idx, val in aut_id_freq_autcount.iteritems():
-	chartxy[ idx ] = val
+	chartxy[ str(idx) ] = str(val)
+	chartx.append( idx )
 	text = text + "|-\n| " + str( idx ) + " || " + str( val ) + "\n"
 
 text = text + "|}\n"
 
-text = text + "{{Graph:Chart|width=600|height=200|type=rect|legend=Llegenda|x="+",".join(slice(1,len(chartxy)+1,1))+"|y="+",".join(chartxy)+"|showValues=}}\n"
+chartx.sort()
+for i in chartx :
+	charty.append( chartxy[str(i)] )
+
+text = text + "{{Graph:Chart|width=600|height=200|type=rect|legend=Llegenda|x="+",".join(chartx)+"|y="+",".join(charty)+"|showValues=}}\n"
 
 text = text + "\n=== Pàgines només amb 1 autoritat ===\n\n"
 
