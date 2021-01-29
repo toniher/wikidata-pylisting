@@ -198,7 +198,7 @@ text = text + "\n{| class='wikitable sortable'\n"
 
 text = text + "! Nombre d'autoritats !! Pàgines \n"
 for idx, val in aut_id_freq_autcount.iteritems():
-	chartxy[ str(idx) ] = str(val)
+	chartxy{ str(idx) } = str(val)
 	chartx.append( idx )
 	text = text + "|-\n| " + str( idx ) + " || " + str( val ) + "\n"
 
