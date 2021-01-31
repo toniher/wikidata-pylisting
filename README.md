@@ -56,13 +56,10 @@ Recupera pàgines amb plantilla autoritat:
 
 * Vegeu ./queries
 
-## Estadístiques
+## A la Viquipèdia
 
-PER FER
-
-* Nombre de pàgines amb registres d'autoritat respecte a les totals
-* Nombre de pàgines amb o sense plantilla autoritat i amb referències o no de registres d'autoritat
-* Nombre total d'usos en pàgina d'autoritats per cada autoritat ( x Autoritat, y nombre de pàgines )
-* Nombre d'usos en pàgina d'autoritats per total d'usos per pàgina ( x nombre d'autoritats, y nombre de pàgines )
-* En pàgines utilitzades nombre d'usos totals d'autoritat respecte a altres autoritats ( x Autoritat, y mitja-desviació )
-etc.
+* [Seguiment de biografies](https://ca.wikipedia.org/wiki/Usuari:Toniher/Bios)
+  * [Seguiment de biografies de dones](https://ca.wikipedia.org/wiki/Viquiprojecte:Viquidones/Progr%C3%A9s)
+* [Comprovacions de gènere](https://ca.wikipedia.org/wiki/Usuari:Toniher/StatsGender)
+* [Problemàtiques de Wikidata i biografies](https://ca.wikipedia.org/wiki/Usuari:Toniher/CheckBios)
+* [Tauler d'autoritats](https://ca.wikipedia.org/wiki/Usuari:Toniher/Autoritats)
