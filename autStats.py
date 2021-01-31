@@ -302,5 +302,8 @@ bios_aut_bne1 = aut_bne1.merge( bios_aut, how="inner", on="id" )[["id", "article
 printDfoWiki( bios_aut_bne1, site, "Actualització de recompte d'autoritats", autpage+"/BNE" )
 text = text + "\n* [[/BNE|BNE per revisar]]"
 
+printDfoWiki( noplanaut_bd, site, "Actualització de recompte d'autoritats", autpage+"/Noplanaut_BD" )
+text = text + "\n* [[/BNE|Amb bases d'informació i sense plantilla d'autoritat per revisar]]"
+
 print( text )
 printToWiki( text, site, "Actualització de recompte d'autoritats", autpage )
