@@ -304,7 +304,7 @@ printDfoWiki( bios_aut_bne1, site, "Actualització de recompte d'autoritats", au
 text = text + "\n* [[/BNE|BNE per revisar]]"
 
 printDfoWiki( noplanaut_bd[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Noplanaut_BD" )
-text = text + "\n* [[/BNE|Amb bases d'informació i sense plantilla d'autoritat per revisar]]"
+text = text + "\n* [[/Noplanaut BD|Amb bases d'informació i sense plantilla d'autoritat per revisar]]"
 
 print( text )
 printToWiki( text, site, "Actualització de recompte d'autoritats", autpage )
