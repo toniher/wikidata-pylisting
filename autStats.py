@@ -126,7 +126,8 @@ bios_noaut = bios[~bios.id.isin(aut.id.unique())]
 
 # Bios without bd
 bios_nobd = bios[~bios.id.isin(aut_bd.id.unique())]
-
+# Bios with bd
+bios_bd = bios[bios.id.isin(aut_bd.id.unique())]
 
 aut_freq = aut.name.value_counts()
 aut_id_freq = aut.groupby(by='id', as_index=False).agg({'name': pd.Series.nunique})
@@ -255,9 +256,9 @@ text = text + "\n=== Plantilla no inclosa ===\n\n"
 text = text + "* Nombre d'articles: " + str( bios_count - planaut_count ) + "\n"
 
 # Amb algun registre
-noplanaut_aut = aut[ ~aut.id.isin( planaut.id.unique() ) ]
+noplanaut_aut = bios_aut[ ~bios_aut.id.isin( planaut.id.unique() ) ]
 text = text + "** Amb autoritats: " + str( noplanaut_aut.shape[0] ) + "\n"
-noplanaut_bd = aut_bd[ ~aut_bd.id.isin( planaut.id.unique() ) ]
+noplanaut_bd = bios_bd[ ~bios_bd.id.isin( planaut.id.unique() ) ]
 
 text = text + "*** Amb bases d'informació: " + str( noplanaut_bd.shape[0] ) + "\n"
 
@@ -302,7 +303,7 @@ bios_aut_bne1 = aut_bne1.merge( bios_aut, how="inner", on="id" )[["id", "article
 printDfoWiki( bios_aut_bne1, site, "Actualització de recompte d'autoritats", autpage+"/BNE" )
 text = text + "\n* [[/BNE|BNE per revisar]]"
 
-printDfoWiki( noplanaut_bd, site, "Actualització de recompte d'autoritats", autpage+"/Noplanaut_BD" )
+printDfoWiki( noplanaut_bd[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Noplanaut_BD" )
 text = text + "\n* [[/BNE|Amb bases d'informació i sense plantilla d'autoritat per revisar]]"
 
 print( text )
