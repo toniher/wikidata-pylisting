@@ -173,6 +173,10 @@ def saveToDb( toprint, conn ):
 		c.execute("CREATE INDEX IF NOT EXISTS `idx_id` ON gender (id);")
 		c.execute("CREATE INDEX IF NOT EXISTS `idx_gender` ON gender (gender);")
 
+		c.execute("CREATE TABLE IF NOT EXISTS `run` (  `date` datetime DEFAULT CURRENT_TIMESTAMP, `name` VARCHAR(25), PRIMARY KEY (`date`, `name`) ) ;")
+		c.execute("INSERT INTO `run` (`name`) VALUES (%s)", ["bios"])
+
+
 		for index, row in toprint.iterrows():
 
 			if row['genere'] == "nan":

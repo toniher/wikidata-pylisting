@@ -93,6 +93,9 @@ if "title" in args:
         cur.execute("CREATE INDEX IF NOT EXISTS idx_article ON whatlinks (`article`);")
         cur.execute("CREATE INDEX IF NOT EXISTS idx_against ON whatlinks (`against`);")
 
+        cur.execute("CREATE TABLE IF NOT EXISTS `run` (  `date` datetime DEFAULT CURRENT_TIMESTAMP, `name` VARCHAR(25), PRIMARY KEY (`date`, `name`) ) ;")
+        cur.execute("INSERT INTO `run` (`name`) VALUES (%s)", ["whatlinks"])
+
         cur.execute("DELETE from `whatlinks` where `against` = \""+args.title+"\"")
 
         links = []
