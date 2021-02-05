@@ -3,3 +3,4 @@
 mwclient==0.10.1
 wikidata==0.7.0
 pandas==1.1.0
+bs4==4.9.3
