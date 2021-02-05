@@ -73,6 +73,10 @@ if "dump" in args:
     if args.dump is not None:
 
         cur = conn.cursor()
+        cur.execute("CREATE TABLE IF NOT EXISTS `run` (  `date` datetime DEFAULT CURRENT_TIMESTAMP, `name` VARCHAR(25), PRIMARY KEY (`date`, `name`) ) ;")
+        cur.execute("CREATE INDEX idx_date ON run (date);")
+        cur.execute("CREATE INDEX idx_name ON run (name);")
+
         cur.execute("DROP TABLE IF EXISTS `authorities`;")
         cur.execute("CREATE TABLE IF NOT EXISTS `authorities` (  `id` VARCHAR(25), `authority` VARCHAR(25), PRIMARY KEY (`id`, `authority`) ) ;")
         cur.execute("CREATE INDEX idx_id ON authorities (id);")
@@ -83,6 +87,7 @@ if "dump" in args:
         cur.execute("CREATE INDEX IF NOT EXISTS `idx_name` ON authtypes (name);")
         cur.execute("CREATE INDEX IF NOT EXISTS `idx_type` ON authtypes (authtype);")
 
+        cur.execute("INSERT INTO `run` (`name`) VALUES (%s)", ["auth"])
 
         # Fill authtypes
         for prop in authtypes:
