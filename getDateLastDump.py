@@ -12,7 +12,7 @@ arrlist = []
 
 
 def checkElement(checkurl, ending):
-    checkpage = requests.get(url).text
+    checkpage = requests.get(checkurl).text
     soup = BeautifulSoup(checkpage, 'html.parser')
     for node in soup.find_all('a'):
         if node.get('href').endswith(ending):
