@@ -1,3 +1,6 @@
+#!/bin/bash
+set -ueo pipefail
+
 CUR=$(pwd)
 DATE=$(python getDateLastDump.py)
 DOWN=/projects/wikidata
