@@ -22,7 +22,7 @@ if test $status -eq 0
 then
 	# Process file
 	cd $CUR; python autoritiesCheck.py -config ${CONFJSON} -authorities conf/autoritats.tsv -dump $DOWN/wikidata-$DATE-all.json.gz
+	cd $CUR; python autStats.py -config ${CONFJSON}
 else
 	exit 1
 fi
-
