@@ -23,6 +23,7 @@ then
 	# Process file
 	cd $CUR; python autoritiesCheck.py -config ${CONFJSON} -authorities conf/autoritats.tsv -dump $DOWN/wikidata-$DATE-all.json.gz
 	cd $CUR; python autStats.py -config ${CONFJSON}
+	cd $CUR; python autStats.py -config ${CONFJSON} -specific dones
 else
 	exit 1
 fi
