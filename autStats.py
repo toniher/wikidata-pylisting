@@ -110,6 +110,7 @@ extratable = ""
 extrawhere = ""
 
 if specific == "dones"
+	autpage = autpagew
 	extratable = ", `gender` g "
 	extrawhere = " and g.id=w.id and g.gender='Q6581072'"
 
