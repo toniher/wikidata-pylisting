@@ -102,13 +102,15 @@ def printDfoWiki( df, site, summary, targetpage ):
 
 # Get all bios
 bios = pd.read_sql_query("SELECT w.id as id, w.article as article from `bios` b, `wikidata` w where b.article=w.article", conn)
-female = pd.read_sql_query("SELECT w.id as id, w.article as article from `bios` b, `wikidata` w, `gender` g where b.article=w.article and g.id=w.id and g.gender='Q6581072'", conn)
+bios_female = pd.read_sql_query("SELECT w.id as id, w.article as article from `bios` b, `wikidata` w, `gender` g where b.article=w.article and g.id=w.id and g.gender='Q6581072'", conn)
 
 # Plantilla whatlinks
 planaut = pd.read_sql_query("SELECT w.id as id, w.article as article from `whatlinks` l, `wikidata` w where l.article=w.article and l.against='Plantilla:Autoritat'", conn)
+planaut_female = pd.read_sql_query("SELECT w.id as id, w.article as article from `whatlinks` l, `wikidata` w, `gender` g where g.id=w.id and g.gender='Q6581072' and l.article=w.article and l.against='Plantilla:Autoritat'", conn)
 
 # Entrades amb autoritat
 aut = pd.read_sql_query("SELECT a.id as id, a.authority as authority, t.name as name, t.authtype as authtype from `authorities` a, `wikidata` w, `authtypes` t where a.id=w.id and a.authority=t.prop", conn)
+aut_female = pd.read_sql_query("SELECT a.id as id, a.authority as authority, t.name as name, t.authtype as authtype from `authorities` a, `wikidata` w, `authtypes` t, `gender` g where a.id=w.id and g.id=w.id and g.gender='Q6581072' and a.authority=t.prop", conn)
 
 def pandaProcess(bios, planaut, aut, autpage):
 
@@ -316,4 +318,4 @@ def pandaProcess(bios, planaut, aut, autpage):
 	return True
 
 pandaProcess(bios, planaut, aut, autpage)
-pandaProcess(female, planaut, aut, autpagew)
+pandaProcess(bios_female, planaut_female, aut_female, autpagew)
