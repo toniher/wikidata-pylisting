@@ -102,7 +102,7 @@ def printDfoWiki( df, site, summary, targetpage ):
 
 # Get all bios
 bios = pd.read_sql_query("SELECT w.id as id, w.article as article from `bios` b, `wikidata` w where b.article=w.article", conn)
-female = pd.read_sql_query("SELECT w.id as id, w.article as article from `bios` b, `wikidata` w, `gender` g where b.article=w.article and g.id=b.id and g.gender='Q6581072'", conn)
+female = pd.read_sql_query("SELECT w.id as id, w.article as article from `bios` b, `wikidata` w, `gender` g where b.article=w.article and g.id=w.id and g.gender='Q6581072'", conn)
 
 # Plantilla whatlinks
 planaut = pd.read_sql_query("SELECT w.id as id, w.article as article from `whatlinks` l, `wikidata` w where l.article=w.article and l.against='Plantilla:Autoritat'", conn)
