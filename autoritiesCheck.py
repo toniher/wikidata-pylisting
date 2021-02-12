@@ -83,7 +83,7 @@ if "dump" in args:
         cur.execute("CREATE INDEX idx_authorities ON authorities (authority);")
 
         cur.execute("DROP TABLE IF EXISTS `authtypes`;")
-        cur.execute("CREATE TABLE IF NOT EXISTS `authtypes` (  `name` VARCHAR(25), `desc` VARCHAR(125), `prop` VARCHAR(25), `authtype` int(1), PRIMARY KEY (`prop`) ) ;")
+        cur.execute("CREATE TABLE IF NOT EXISTS `authtypes` (  `name` VARCHAR(25), `desc` VARCHAR(125), `prop` VARCHAR(25), `authtype` int(2), PRIMARY KEY (`prop`) ) ;")
         cur.execute("CREATE INDEX IF NOT EXISTS `idx_name` ON authtypes (name);")
         cur.execute("CREATE INDEX IF NOT EXISTS `idx_type` ON authtypes (authtype);")
 
