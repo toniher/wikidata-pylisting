@@ -120,6 +120,10 @@ bios = pd.read_sql_query("SELECT w.id as id, w.article as article from `bios` b,
 # Plantilla whatlinks
 planaut = pd.read_sql_query("SELECT w.id as id, w.article as article from `whatlinks` l, `wikidata` w " + extratable + " where l.article=w.article and l.against='Plantilla:Autoritat'"+extrawhere, conn)
 
+planfva = pd.read_sql_query("SELECT w.id as id, w.article as article from `whatlinks` l, `wikidata` w " + extratable + " where l.article=w.article and l.against='Plantilla:Falta_verificar_admissibilitat'"+extrawhere, conn)
+
+plannrf = pd.read_sql_query("SELECT w.id as id, w.article as article from `whatlinks` l, `wikidata` w " + extratable + " where l.article=w.article and l.against='Plantilla:Falten_referències'"+extrawhere, conn)
+
 # Entrades amb autoritat
 aut = pd.read_sql_query("SELECT a.id as id, a.authority as authority, t.name as name, t.authtype as authtype from `authorities` a, `wikidata` w, `authtypes` t" + extratable +" where a.id=w.id and a.authority=t.prop"+extrawhere, conn)
 
