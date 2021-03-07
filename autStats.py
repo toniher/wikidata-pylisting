@@ -268,7 +268,7 @@ text = text + "** Sense autoritats: " + str(planaut_naut.shape[0]) + "\n"
 
 # Sense base d'informació
 planaut_nbd = planaut[~planaut.id.isin(aut_bd.id.unique())]
-text = text + "*** Sense bases d'informació: " + str(planaut_nbd.shape[0]) + "\n"
+text = text + "** Sense bases d'informació: " + str(planaut_nbd.shape[0]) + "\n"
 
 text = text + "\n=== Plantilla no inclosa ===\n\n"
 
@@ -307,7 +307,7 @@ text = text + "** Sense autoritats: " + str(planfva_naut.shape[0]) + "\n"
 
 # Sense base d'informació
 planfva_nbd = planfva[~planfva.id.isin(aut_bd.id.unique())]
-text = text + "*** Sense bases d'informació: " + str(planfva_nbd.shape[0]) + "\n"
+text = text + "** Sense bases d'informació: " + str(planfva_nbd.shape[0]) + "\n"
 
 # Plantilla falten referències
 
@@ -331,7 +331,7 @@ text = text + "** Sense autoritats: " + str(plannrf_naut.shape[0]) + "\n"
 
 # Sense base d'informació
 plannrf_nbd = plannrf[~plannrf.id.isin(aut_bd.id.unique())]
-text = text + "*** Sense bases d'informació: " + str(plannrf_nbd.shape[0]) + "\n"
+text = text + "** Sense bases d'informació: " + str(plannrf_nbd.shape[0]) + "\n"
 
 # Revisions diverses
 # TODO: Cal fer més diverses i útils
