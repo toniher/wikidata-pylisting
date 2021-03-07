@@ -64,27 +64,27 @@ if conn is None:
 
 cur = conn.cursor()
 
-def formatWikidata( value ):
+def formatWikidata(value):
 
 	value = "[[:d:"+value+"|"+value+"]]"
 	return value
 
-def formatCawiki( value ):
+def formatCawiki(value):
 
 	text = value.replace("_", " ")
 	value = "[["+value+"|"+text+"]]"
 	return value
 
-def printToWiki( toprint, site, summary, targetpage ):
+def printToWiki(toprint, site, summary, targetpage):
 
 	text = toprint
 
-	page = site.pages[ targetpage ]
-	page.save( text, summary=summary, minor=False, bot=True )
+	page = site.pages[targetpage]
+	page.save(text, summary=summary, minor=False, bot=True)
 
 	return True
 
-def printDfoWiki( df, site, summary, targetpage ):
+def printDfoWiki(df, site, summary, targetpage):
 
 	text = ""
 	text = text + "\n{| class='wikitable sortable'\n"
@@ -92,12 +92,12 @@ def printDfoWiki( df, site, summary, targetpage ):
 	text = text + "! id !! article \n"
 
 	for id, article in df.itertuples(index=False):
-		text = text + "|-\n| " + formatWikidata( str(id) ) + " || " + formatCawiki( str( article ) ) + "\n"
+		text = text + "|-\n| " + formatWikidata(str(id)) + " || " + formatCawiki(str(article)) + "\n"
 
 	text = text + "|}\n"
 
-	page = site.pages[ targetpage ]
-	page.save( text, summary=summary, minor=False, bot=True )
+	page = site.pages[targetpage]
+	page.save(text, summary=summary, minor=False, bot=True)
 
 	return True
 
@@ -132,7 +132,7 @@ aut_rg = aut[aut.authtype.eq(1)]
 # Entres amb bases d'informació
 aut_bd = aut[aut.authtype.eq(2)]
 
-aut_rg_bd = aut_rg[aut_rg.id.isin( aut_bd.id.unique() ) ]
+aut_rg_bd = aut_rg[aut_rg.id.isin(aut_bd.id.unique())]
 
 
 bios_count = bios.shape[0]
@@ -164,45 +164,45 @@ text = nota + "\n\n"
 # Prepare text
 text = text + "== General de biografies ==\n\n"
 
-text = text + "* Total: " + str( bios_count ) + "\n"
+text = text + "* Total: " + str(bios_count) + "\n"
 
 # Stats
 # * Total amb registres Autoritat i bases
 aut_count = aut.id.nunique()
-text = text + "** Amb autoritats: " + str( aut_count ) + "\n"
+text = text + "** Amb autoritats: " + str(aut_count) + "\n"
 
 # * Total amb registres Autoritat
 aut_rg_count = aut_rg.id.nunique()
-text = text + "*** Amb registres de control: " + str( aut_rg_count ) + "\n"
+text = text + "*** Amb registres de control: " + str(aut_rg_count) + "\n"
 
 # * Total amb registres autoritat i bases
 aut_rg_bd_count = aut_rg_bd.id.nunique()
-text = text + "**** Amb registres de control i també bases d'informació: " + str( aut_rg_bd_count ) + "\n"
+text = text + "**** Amb registres de control i també bases d'informació: " + str(aut_rg_bd_count) + "\n"
 
 # * Total amb registre i sense base
-text = text + "**** Amb registres de control però sense bases d'informació: " + str( aut_rg_count - aut_rg_bd_count ) + "\n"
+text = text + "**** Amb registres de control però sense bases d'informació: " + str(aut_rg_count - aut_rg_bd_count) + "\n"
 
 # * Total amb bases d'informació
 aut_bd_count = aut_bd.id.nunique()
-text = text + "*** Amb bases d'informació: " + str( aut_bd_count ) + "\n"
+text = text + "*** Amb bases d'informació: " + str(aut_bd_count) + "\n"
 
 # * Total amb bases i sense registre
-text = text + "**** Amb bases d'informació però sense registres de control: " + str( aut_bd_count - aut_rg_bd_count ) + "\n"
+text = text + "**** Amb bases d'informació però sense registres de control: " + str(aut_bd_count - aut_rg_bd_count) + "\n"
 
 text = text + "== Recompte per autoritats ==\n\n"
 
 text = text + "=== Nombre d'autoritats ===\n"
 # * Recompte per cada diferent propietat
-# print( aut_freq )
+# print(aut_freq)
 text = text + "\n{| class='wikitable sortable'\n"
 
 chartx = []
 charty = []
 text = text + "! Autoritat !! Recompte \n"
 for idx, val in aut_freq.iteritems():
-	chartx.append( idx )
-	charty.append( str( val ) )
-	text = text + "|-\n| " + idx + " || " + str( val ) + "\n"
+	chartx.append(idx)
+	charty.append(str(val))
+	text = text + "|-\n| " + idx + " || " + str(val) + "\n"
 
 text = text + "|}\n"
 
@@ -218,15 +218,15 @@ text = text + "\n{| class='wikitable sortable'\n"
 
 text = text + "! Nombre d'autoritats !! Pàgines \n"
 for idx, val in aut_id_freq_autcount.iteritems():
-	chartxy[ str(idx) ] = str(val)
-	chartx.append( idx )
-	text = text + "|-\n| " + str( idx ) + " || " + str( val ) + "\n"
+	chartxy[str(idx)] = str(val)
+	chartx.append(idx)
+	text = text + "|-\n| " + str(idx) + " || " + str(val) + "\n"
 
 text = text + "|}\n"
 
 chartx.sort()
 for i in chartx :
-	charty.append( chartxy[str(i)] )
+	charty.append(chartxy[str(i)])
 
 text = text + "{{Graph:Chart|width=600|height=200|type=rect|x="+",".join(map(lambda x: str(x), chartx))+"|y="+",".join(charty)+"|showValues=}}\n"
 
@@ -235,16 +235,16 @@ text = text + "\n=== Pàgines només amb 1 autoritat ===\n\n"
 # Seguiment
 # * Pagines només amb 1
 aut_id_freq_aut1_count = aut_id_freq_aut1.id.nunique()
-text = text + "Nombre: " + str( aut_id_freq_aut1_count )
+text = text + "Nombre: " + str(aut_id_freq_aut1_count)
 
 # * Pàgines només amb 1 segons propietat
-aut_id_freq_aut1_freq = aut[ aut.id.isin( aut_id_freq_aut1.id.unique() ) ]["name"].value_counts()
+aut_id_freq_aut1_freq = aut[aut.id.isin(aut_id_freq_aut1.id.unique())]["name"].value_counts()
 
 text = text + "\n{| class='wikitable sortable'\n"
 
 text = text + "! Autoritat !! Recompte \n"
 for idx, val in aut_id_freq_aut1_freq.iteritems():
-	text = text + "|-\n| " + idx + " || " + str( val ) + "\n"
+	text = text + "|-\n| " + idx + " || " + str(val) + "\n"
 
 text = text + "|}\n"
 
@@ -254,36 +254,87 @@ planaut_count = planaut.shape[0]
 
 text = text + "\n=== Plantilla inclosa ===\n\n"
 
-text = text + "* Nombre d'articles: " + str( planaut_count ) + "\n"
+text = text + "* Nombre d'articles: " + str(planaut_count) + "\n"
 
 # * Total amb plantilla Autoritat
 # Amb algun registre
-planaut_aut = planaut[ planaut.id.isin(aut.id.unique()) ]
+planaut_aut = planaut[planaut.id.isin(aut.id.unique())]
 
-text = text + "** Amb autoritats: " + str( planaut_aut.shape[0] ) + "\n"
+text = text + "** Amb autoritats: " + str(planaut_aut.shape[0]) + "\n"
 
 # Sense registre
-planaut_naut = planaut[ ~planaut.id.isin(aut.id.unique()) ]
-text = text + "** Sense autoritats: " + str( planaut_naut.shape[0] ) + "\n"
+planaut_naut = planaut[~planaut.id.isin(aut.id.unique())]
+text = text + "** Sense autoritats: " + str(planaut_naut.shape[0]) + "\n"
 
 # Sense base d'informació
-planaut_nbd = planaut[ ~planaut.id.isin(aut_bd.id.unique()) ]
-text = text + "*** Sense bases d'informació: " + str( planaut_nbd.shape[0] ) + "\n"
+planaut_nbd = planaut[~planaut.id.isin(aut_bd.id.unique())]
+text = text + "*** Sense bases d'informació: " + str(planaut_nbd.shape[0]) + "\n"
 
 text = text + "\n=== Plantilla no inclosa ===\n\n"
 
-text = text + "* Nombre d'articles: " + str( bios_count - planaut_count ) + "\n"
+text = text + "* Nombre d'articles: " + str(bios_count - planaut_count) + "\n"
 
 # Amb algun registre
-noplanaut_aut = bios_aut[ ~bios_aut.id.isin( planaut.id.unique() ) ]
-text = text + "** Amb autoritats: " + str( noplanaut_aut.shape[0] ) + "\n"
-noplanaut_bd = bios_bd[ ~bios_bd.id.isin( planaut.id.unique() ) ]
+noplanaut_aut = bios_aut[~bios_aut.id.isin(planaut.id.unique())]
+text = text + "** Amb autoritats: " + str(noplanaut_aut.shape[0]) + "\n"
+noplanaut_bd = bios_bd[~bios_bd.id.isin(planaut.id.unique())]
 
-text = text + "*** Amb bases d'informació: " + str( noplanaut_bd.shape[0] ) + "\n"
+text = text + "*** Amb bases d'informació: " + str(noplanaut_bd.shape[0]) + "\n"
 
 # Sense cap registre
-noplanaut_bios = bios_noaut[ ~bios_noaut.id.isin( planaut.id.unique() ) ]
-text = text + "** Sense autoritats: " + str( noplanaut_bios.shape[0] ) + "\n"
+noplanaut_bios = bios_noaut[~bios_noaut.id.isin(planaut.id.unique())]
+text = text + "** Sense autoritats: " + str(noplanaut_bios.shape[0]) + "\n"
+
+# Plantilla falta verificar admissibilitat
+
+text = text + "\n== Plantilla d'admissibilitat==\n\n"
+
+planfva_count = planfva.shape[0]
+
+text = text + "\n=== Plantilla inclosa ===\n\n"
+
+text = text + "* Nombre d'articles: " + str(planfva_count) + "\n"
+
+# * Total amb plantilla admissibilitat
+# Amb algun registre
+planfva_aut = planfva[planfva.id.isin(aut.id.unique())]
+
+text = text + "** Amb autoritats: " + str(planfva_aut.shape[0]) + "\n"
+
+# Sense registre
+planfva_naut = planfva[~planfva.id.isin(aut.id.unique())]
+text = text + "** Sense autoritats: " + str(planfva_naut.shape[0]) + "\n"
+
+# Sense base d'informació
+planfva_nbd = planfva[~planfva.id.isin(aut_bd.id.unique())]
+text = text + "*** Sense bases d'informació: " + str(planfva_nbd.shape[0]) + "\n"
+
+# Plantilla falten referències
+
+text = text + "\n== Plantilla de manca de referències ==\n\n"
+
+plannrf_count = plannrf.shape[0]
+
+text = text + "\n=== Plantilla inclosa ===\n\n"
+
+text = text + "* Nombre d'articles: " + str(plannrf_count) + "\n"
+
+# * Total amb plantilla Autoritat
+# Amb algun registre
+plannrf_aut = plannrf[plannrf.id.isin(aut.id.unique())]
+
+text = text + "** Amb autoritats: " + str(plannrf_aut.shape[0]) + "\n"
+
+# Sense registre
+plannrf_naut = plannrf[~plannrf.id.isin(aut.id.unique())]
+text = text + "** Sense autoritats: " + str(plannrf_naut.shape[0]) + "\n"
+
+# Sense base d'informació
+plannrf_nbd = plannrf[~plannrf.id.isin(aut_bd.id.unique())]
+text = text + "*** Sense bases d'informació: " + str(plannrf_nbd.shape[0]) + "\n"
+
+# Revisions diverses
+# TODO: Cal fer més diverses i útils
 
 text = text + "\n== Revisió ==\n\n"
 
@@ -295,35 +346,35 @@ aut_cantic = aut[aut.name.eq("CANTIC")]
 aut_bne = aut[aut.name.eq("BNE")]
 
 # * Pàgines només amb ORCID
-aut_orcid1 = aut_orcid[aut_orcid.id.isin( aut_id_freq_aut1.id.unique() )]
-bios_aut_orcid1 = aut_orcid1.merge( bios_aut, how="inner", on="id" )[["id", "article"]]
+aut_orcid1 = aut_orcid[aut_orcid.id.isin(aut_id_freq_aut1.id.unique())]
+bios_aut_orcid1 = aut_orcid1.merge(bios_aut, how="inner", on="id")[["id", "article"]]
 
-printDfoWiki( bios_aut_orcid1, site, "Actualització de recompte d'autoritats", autpage+"/ORCID" )
+printDfoWiki(bios_aut_orcid1, site, "Actualització de recompte d'autoritats", autpage+"/ORCID")
 text = text + "\n* [[/ORCID|ORCID per revisar]]"
 
 # * Pàgines només amb VIAF
-aut_viaf1 = aut_viaf[aut_viaf.id.isin( aut_id_freq_aut1.id.unique() )]
-bios_aut_viaf1 = aut_viaf1.merge( bios_aut, how="inner", on="id" )[["id", "article"]]
+aut_viaf1 = aut_viaf[aut_viaf.id.isin(aut_id_freq_aut1.id.unique())]
+bios_aut_viaf1 = aut_viaf1.merge(bios_aut, how="inner", on="id")[["id", "article"]]
 
-printDfoWiki( bios_aut_viaf1, site, "Actualització de recompte d'autoritats", autpage+"/VIAF" )
+printDfoWiki(bios_aut_viaf1, site, "Actualització de recompte d'autoritats", autpage+"/VIAF")
 text = text + "\n* [[/VIAF|VIAF per revisar]]"
 
 # * Pàgines només amb CANTIC
-aut_cantic1 = aut_cantic[aut_cantic.id.isin( aut_id_freq_aut1.id.unique() )]
-bios_aut_cantic1 = aut_cantic1.merge( bios_aut, how="inner", on="id" )[["id", "article"]]
+aut_cantic1 = aut_cantic[aut_cantic.id.isin(aut_id_freq_aut1.id.unique())]
+bios_aut_cantic1 = aut_cantic1.merge(bios_aut, how="inner", on="id")[["id", "article"]]
 
-printDfoWiki( bios_aut_cantic1, site, "Actualització de recompte d'autoritats", autpage+"/CANTIC" )
+printDfoWiki(bios_aut_cantic1, site, "Actualització de recompte d'autoritats", autpage+"/CANTIC")
 text = text + "\n* [[/CANTIC|CANTIC per revisar]]"
 
 # * Pàgines només amb BNE
-aut_bne1 = aut_bne[aut_bne.id.isin( aut_id_freq_aut1.id.unique() )]
-bios_aut_bne1 = aut_bne1.merge( bios_aut, how="inner", on="id" )[["id", "article"]]
+aut_bne1 = aut_bne[aut_bne.id.isin(aut_id_freq_aut1.id.unique())]
+bios_aut_bne1 = aut_bne1.merge(bios_aut, how="inner", on="id")[["id", "article"]]
 
-printDfoWiki( bios_aut_bne1, site, "Actualització de recompte d'autoritats", autpage+"/BNE" )
+printDfoWiki(bios_aut_bne1, site, "Actualització de recompte d'autoritats", autpage+"/BNE")
 text = text + "\n* [[/BNE|BNE per revisar]]"
 
-printDfoWiki( noplanaut_bd[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Noplanaut_BD" )
+printDfoWiki(noplanaut_bd[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Noplanaut_BD")
 text = text + "\n* [[/Noplanaut BD|Amb bases d'informació i sense plantilla d'autoritat per revisar]]"
 
-print( text )
-printToWiki( text, site, "Actualització de recompte d'autoritats", autpage )
+print(text)
+printToWiki(text, site, "Actualització de recompte d'autoritats", autpage)
