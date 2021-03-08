@@ -63,3 +63,4 @@ Recupera pàgines amb plantilla autoritat:
 * [Comprovacions de gènere](https://ca.wikipedia.org/wiki/Usuari:Toniher/StatsGender)
 * [Problemàtiques de Wikidata i biografies](https://ca.wikipedia.org/wiki/Usuari:Toniher/CheckBios)
 * [Tauler d'autoritats](https://ca.wikipedia.org/wiki/Usuari:Toniher/Autoritats)
+* [Tauler d'autoritats (específic de dones)](https://ca.wikipedia.org/wiki/Viquiprojecte:Viquidones/Autoritats)
