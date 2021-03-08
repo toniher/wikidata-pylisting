@@ -299,7 +299,11 @@ text = text + "* Nombre d'articles: " + str(planfva_count) + "\n"
 # Amb algun registre
 planfva_aut = planfva[planfva.id.isin(aut.id.unique())]
 
-text = text + "** Amb autoritats: " + str(planfva_aut.shape[0]) + "\n"
+text = text + "** [[/Planfva_Aut|Amb autoritats]]: " + str(planfva_aut.shape[0]) + "\n"
+
+# Amb bases d'informació
+planfva_bd = planfva[planfva.id.isin(aut_bd.id.unique())]
+text = text + "*** [[/Planfva_BD|Amb bases d'informació]]: " + str(planfva_bd.shape[0]) + "\n"
 
 # Sense registre
 planfva_naut = planfva[~planfva.id.isin(aut.id.unique())]
@@ -323,7 +327,10 @@ text = text + "* Nombre d'articles: " + str(plannrf_count) + "\n"
 # Amb algun registre
 plannrf_aut = plannrf[plannrf.id.isin(aut.id.unique())]
 
-text = text + "** Amb autoritats: " + str(plannrf_aut.shape[0]) + "\n"
+text = text + "** [[/Plannrf_Aut|Amb autoritats]]: " + str(plannrf_aut.shape[0]) + "\n"
+
+plannrf_bd = plannrf[plannrf.id.isin(aut_bd.id.unique())]
+text = text + "*** [[/Plannrf_BD|Amb bases d'informació]]: " + str(plannrf_bd.shape[0]) + "\n"
 
 # Sense registre
 plannrf_naut = plannrf[~plannrf.id.isin(aut.id.unique())]
@@ -375,6 +382,14 @@ text = text + "\n* [[/BNE|BNE per revisar]]"
 
 printDfoWiki(noplanaut_bd[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Noplanaut_BD")
 text = text + "\n* [[/Noplanaut BD|Amb bases d'informació i sense plantilla d'autoritat per revisar]]"
+
+# More pages
+printDfoWiki(plannrf_aut[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Plannrf_Aut")
+printDfoWiki(plannrf_bd[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Plannrf_BD")
+
+printDfoWiki(planfva_aut[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Planfva_Aut")
+printDfoWiki(planfva_bd[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Planfva_BD")
+
 
 print(text)
 printToWiki(text, site, "Actualització de recompte d'autoritats", autpage)
