@@ -445,7 +445,8 @@ if logdir:
 	datebit = now.strftime("%Y%m%d")
 	pathdir = logdir + "/" + datebit
 	pathlog = pathdir + "/" + prefix + ".csv"
-	os.mkdir(pathdir)
+	if not os.path.exists(pathdir):
+		os.mkdir(pathdir)
 	towrite = ""
 	for key in sorted(storehash):
 		towrite = towrite + key + "\t" + str(storehash[key]) + "\n"
