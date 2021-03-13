@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+from datetime import datetime
 import requests
 import pandas as pd
 import numpy as np
@@ -29,6 +31,7 @@ protocol = "https"
 data = {}
 autpage = "User:Toniher/Autoritats"
 autpagew = "Viquiprojecte:Viquidones/Autoritats"
+logdir = None
 
 conn = None
 
@@ -51,7 +54,10 @@ if "mysql" in data:
 	conn = MySQLdb.connect(host=data["mysql"]["host"], user=data["mysql"]["user"], passwd=data["mysql"]["password"], db=data["mysql"]["database"], use_unicode=True, charset='utf8mb4', init_command='SET NAMES utf8mb4')
 
 if "autpage" in data:
-		autpage = data["autpage"]
+	autpage = data["autpage"]
+
+if "logdir" in data:
+	logdir = data["logdir"]
 
 site = mwclient.Site(host, scheme=protocol)
 if user and pwd :
@@ -431,3 +437,18 @@ print(text)
 printToWiki(text, site, "Actualització de recompte d'autoritats", autpage)
 
 # Adding in a log more info
+if logdir:
+	prefix = "all"
+	if specific is not None:
+		prefix = specific
+	now = datetime.now() # current date and time
+	datebit = now.strftime("%Y%m%d")
+	pathdir = logdir + "/" + datebit
+	pathlog = pathdir + "/" + prefix + ".csv"
+	os.mkdir(pathdir)
+	towrite = ""
+	for key in sorted(storehash):
+		towrite = towrite + key + "\t" + str(storehash[key]) + "\n"
+	f = open(pathlog, "w")
+	f.write(towrite)
+	f.close()
