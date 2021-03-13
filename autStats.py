@@ -439,7 +439,7 @@ printToWiki(text, site, "Actualització de recompte d'autoritats", autpage)
 # Adding in a log more info
 if logdir:
 	prefix = "all"
-	if specific is not "":
+	if specific != "":
 		prefix = specific
 	now = datetime.now() # current date and time
 	datebit = now.strftime("%Y%m%d")
