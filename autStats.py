@@ -148,19 +148,19 @@ storehash["bios_count"] = bios_count
 
 # Bios with authority
 bios_aut = bios[bios.id.isin(aut.id.unique())]
-storehash["bios_aut"] = bios_aut
+storehash["bios_aut_count"] = bios_aut.shape[0]
 
 # Bios without authority
 bios_noaut = bios[~bios.id.isin(aut.id.unique())]
-storehash["bios_noaut"] = bios_noaut
+storehash["bios_noaut_count"] = bios_noaut.shape[0]
 
 # Bios without bd
 bios_nobd = bios[~bios.id.isin(aut_bd.id.unique())]
-storehash["bios_nobd"] = bios_nobd
+storehash["bios_nobd_count"] = bios_nobd.shape[0]
 
 # Bios with bd
 bios_bd = bios[bios.id.isin(aut_bd.id.unique())]
-storehash["bios_bd"] = bios_bd
+storehash["bios_bd_count"] = bios_bd.shape[0]
 
 aut_freq = aut.name.value_counts()
 aut_id_freq = aut.groupby(by='id', as_index=False).agg({'name': pd.Series.nunique})
@@ -439,7 +439,7 @@ printToWiki(text, site, "Actualització de recompte d'autoritats", autpage)
 # Adding in a log more info
 if logdir:
 	prefix = "all"
-	if specific is not None:
+	if specific is not "":
 		prefix = specific
 	now = datetime.now() # current date and time
 	datebit = now.strftime("%Y%m%d")
