@@ -106,6 +106,8 @@ specific = ""
 if args.specific is not None:
 	specific = args.specific
 
+storehash = dict()
+
 extratable = ""
 extrawhere = ""
 
@@ -136,17 +138,23 @@ aut_rg_bd = aut_rg[aut_rg.id.isin(aut_bd.id.unique())]
 
 
 bios_count = bios.shape[0]
+storehash["bios_count"] = bios_count
 
 # Bios with authority
 bios_aut = bios[bios.id.isin(aut.id.unique())]
+storehash["bios_aut"] = bios_aut
 
 # Bios without authority
 bios_noaut = bios[~bios.id.isin(aut.id.unique())]
+storehash["bios_noaut"] = bios_noaut
 
 # Bios without bd
 bios_nobd = bios[~bios.id.isin(aut_bd.id.unique())]
+storehash["bios_nobd"] = bios_nobd
+
 # Bios with bd
 bios_bd = bios[bios.id.isin(aut_bd.id.unique())]
+storehash["bios_bd"] = bios_bd
 
 aut_freq = aut.name.value_counts()
 aut_id_freq = aut.groupby(by='id', as_index=False).agg({'name': pd.Series.nunique})
@@ -169,14 +177,17 @@ text = text + "* Total: " + str(bios_count) + "\n"
 # Stats
 # * Total amb registres Autoritat i bases
 aut_count = aut.id.nunique()
+storehash["aut_count"] = aut_count
 text = text + "** Amb autoritats: " + str(aut_count) + "\n"
 
 # * Total amb registres Autoritat
 aut_rg_count = aut_rg.id.nunique()
+storehash["aut_rg_count"] = aut_rg_count
 text = text + "*** Amb registres de control: " + str(aut_rg_count) + "\n"
 
 # * Total amb registres autoritat i bases
 aut_rg_bd_count = aut_rg_bd.id.nunique()
+storehash["aut_rg_bd_count"] = aut_rg_bd_count
 text = text + "**** Amb registres de control i també bases d'informació: " + str(aut_rg_bd_count) + "\n"
 
 # * Total amb registre i sense base
@@ -184,6 +195,7 @@ text = text + "**** Amb registres de control però sense bases d'informació: " 
 
 # * Total amb bases d'informació
 aut_bd_count = aut_bd.id.nunique()
+storehash["aut_bd_count"] = aut_bd_count
 text = text + "*** Amb bases d'informació: " + str(aut_bd_count) + "\n"
 
 # * Total amb bases i sense registre
@@ -202,6 +214,7 @@ text = text + "! Autoritat !! Recompte \n"
 for idx, val in aut_freq.iteritems():
 	chartx.append(idx)
 	charty.append(str(val))
+	storehash["aut_idx_" + idx] = val
 	text = text + "|-\n| " + idx + " || " + str(val) + "\n"
 
 text = text + "|}\n"
@@ -220,6 +233,7 @@ text = text + "! Nombre d'autoritats !! Pàgines \n"
 for idx, val in aut_id_freq_autcount.iteritems():
 	chartxy[str(idx)] = str(val)
 	chartx.append(idx)
+	storehash["aut_num_" + str(idx)] = val
 	text = text + "|-\n| " + str(idx) + " || " + str(val) + "\n"
 
 text = text + "|}\n"
@@ -251,6 +265,7 @@ text = text + "|}\n"
 text = text + "\n== Plantilla d'autoritat==\n\n"
 
 planaut_count = planaut.shape[0]
+storehash["planaut_count"] = planaut_count
 
 text = text + "\n=== Plantilla inclosa ===\n\n"
 
@@ -260,29 +275,34 @@ text = text + "* Nombre d'articles: " + str(planaut_count) + "\n"
 # Amb algun registre
 planaut_aut = planaut[planaut.id.isin(aut.id.unique())]
 
+storehash["planaut_aut_count"] = planaut_aut.shape[0]
 text = text + "** Amb autoritats: " + str(planaut_aut.shape[0]) + "\n"
 
 # Sense registre
 planaut_naut = planaut[~planaut.id.isin(aut.id.unique())]
+storehash["planaut_naut_count"] = planaut_naut.shape[0]
 text = text + "** Sense autoritats: " + str(planaut_naut.shape[0]) + "\n"
 
 # Sense base d'informació
 planaut_nbd = planaut[~planaut.id.isin(aut_bd.id.unique())]
+storehash["planaut_nbd_count"] = planaut_nbd.shape[0]
 text = text + "** Sense bases d'informació: " + str(planaut_nbd.shape[0]) + "\n"
 
 text = text + "\n=== Plantilla no inclosa ===\n\n"
-
+storehash["noplanaut_count"] = bios_count - planaut_count
 text = text + "* Nombre d'articles: " + str(bios_count - planaut_count) + "\n"
 
 # Amb algun registre
 noplanaut_aut = bios_aut[~bios_aut.id.isin(planaut.id.unique())]
+storehash["noplanaut_aut_count"] = noplanaut_aut.shape[0]
 text = text + "** Amb autoritats: " + str(noplanaut_aut.shape[0]) + "\n"
 noplanaut_bd = bios_bd[~bios_bd.id.isin(planaut.id.unique())]
-
+storehash["noplanaut_bd_count"] = noplanaut_bd.shape[0]
 text = text + "*** Amb bases d'informació: " + str(noplanaut_bd.shape[0]) + "\n"
 
 # Sense cap registre
 noplanaut_bios = bios_noaut[~bios_noaut.id.isin(planaut.id.unique())]
+storehash["noplanaut_bios_count"] = noplanaut_bios.shape[0]
 text = text + "** Sense autoritats: " + str(noplanaut_bios.shape[0]) + "\n"
 
 # Plantilla falta verificar admissibilitat
@@ -290,6 +310,7 @@ text = text + "** Sense autoritats: " + str(noplanaut_bios.shape[0]) + "\n"
 text = text + "\n== Plantilla d'admissibilitat==\n\n"
 
 planfva_count = planfva.shape[0]
+storehash["planfva_count"] = planfva_count
 
 text = text + "\n=== Plantilla inclosa ===\n\n"
 
@@ -298,19 +319,26 @@ text = text + "* Nombre d'articles: " + str(planfva_count) + "\n"
 # * Total amb plantilla admissibilitat
 # Amb algun registre
 planfva_aut = planfva[planfva.id.isin(aut.id.unique())]
+storehash["planfva_aut_count"] = planfva_aut.shape[0]
 
 text = text + "** [[/Planfva_Aut|Amb autoritats]]: " + str(planfva_aut.shape[0]) + "\n"
 
 # Amb bases d'informació
 planfva_bd = planfva[planfva.id.isin(aut_bd.id.unique())]
+storehash["planfva_bd_count"] = planfva_bd.shape[0]
+
 text = text + "*** [[/Planfva_BD|Amb bases d'informació]]: " + str(planfva_bd.shape[0]) + "\n"
 
 # Sense registre
 planfva_naut = planfva[~planfva.id.isin(aut.id.unique())]
+storehash["planfva_naut_count"] = planfva_naut.shape[0]
+
 text = text + "** Sense autoritats: " + str(planfva_naut.shape[0]) + "\n"
 
 # Sense base d'informació
 planfva_nbd = planfva[~planfva.id.isin(aut_bd.id.unique())]
+storehash["planfva_nbd_count"] = planfva_nbd.shape[0]
+
 text = text + "** Sense bases d'informació: " + str(planfva_nbd.shape[0]) + "\n"
 
 # Plantilla falten referències
@@ -318,6 +346,7 @@ text = text + "** Sense bases d'informació: " + str(planfva_nbd.shape[0]) + "\n
 text = text + "\n== Plantilla de manca de referències ==\n\n"
 
 plannrf_count = plannrf.shape[0]
+storehash["plannrf_count"] = plannrf_count
 
 text = text + "\n=== Plantilla inclosa ===\n\n"
 
@@ -326,18 +355,25 @@ text = text + "* Nombre d'articles: " + str(plannrf_count) + "\n"
 # * Total amb plantilla Autoritat
 # Amb algun registre
 plannrf_aut = plannrf[plannrf.id.isin(aut.id.unique())]
+storehash["plannrf_aut_count"] = plannrf_aut.shape[0]
 
 text = text + "** [[/Plannrf_Aut|Amb autoritats]]: " + str(plannrf_aut.shape[0]) + "\n"
 
 plannrf_bd = plannrf[plannrf.id.isin(aut_bd.id.unique())]
+storehash["plannrf_bd_count"] = plannrf_bd.shape[0]
+
 text = text + "*** [[/Plannrf_BD|Amb bases d'informació]]: " + str(plannrf_bd.shape[0]) + "\n"
 
 # Sense registre
 plannrf_naut = plannrf[~plannrf.id.isin(aut.id.unique())]
+storehash["plannrf_naut_count"] = plannrf_naut.shape[0]
+
 text = text + "** Sense autoritats: " + str(plannrf_naut.shape[0]) + "\n"
 
 # Sense base d'informació
 plannrf_nbd = plannrf[~plannrf.id.isin(aut_bd.id.unique())]
+storehash["plannrf_nbd_count"] = plannrf_nbd.shape[0]
+
 text = text + "** Sense bases d'informació: " + str(plannrf_nbd.shape[0]) + "\n"
 
 # Revisions diverses
@@ -393,3 +429,5 @@ printDfoWiki(planfva_bd[["id", "article"]], site, "Actualització de recompte d'
 
 print(text)
 printToWiki(text, site, "Actualització de recompte d'autoritats", autpage)
+
+# Adding in a log more info
