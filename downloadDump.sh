@@ -8,10 +8,12 @@ CONFJSON="../allbios.json"
 
 cd $DOWN
 
+rm *md5sums.txt
 wget -c https://dumps.wikimedia.org/wikidatawiki/entities/$DATE/wikidata-$DATE-md5sums.txt -o /dev/null
 
 cat *md5sums.txt | grep 'json.gz' > md5sum.txt
 
+rm *-all.json.gz
 wget -c -t 10 https://dumps.wikimedia.org/wikidatawiki/entities/$DATE/wikidata-$DATE-all.json.gz -o /dev/null
 
 md5sum --strict -c md5sum.txt
