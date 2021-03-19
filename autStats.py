@@ -339,13 +339,13 @@ text = text + "*** [[/Planfva_BD|Amb bases d'informació]]: " + str(planfva_bd.s
 planfva_naut = planfva[~planfva.id.isin(aut.id.unique())]
 storehash["planfva_naut_count"] = planfva_naut.shape[0]
 
-text = text + "** Sense autoritats: " + str(planfva_naut.shape[0]) + "\n"
+text = text + "** [[/Planfva_No_Aut|Sense autoritats]]: " + str(planfva_naut.shape[0]) + "\n"
 
 # Sense base d'informació
 planfva_nbd = planfva[~planfva.id.isin(aut_bd.id.unique())]
 storehash["planfva_nbd_count"] = planfva_nbd.shape[0]
 
-text = text + "** Sense bases d'informació: " + str(planfva_nbd.shape[0]) + "\n"
+text = text + "** [[/Planfva_No_BD|Sense bases d'informació]]: " + str(planfva_nbd.shape[0]) + "\n"
 
 # Plantilla falten referències
 
@@ -374,13 +374,13 @@ text = text + "*** [[/Plannrf_BD|Amb bases d'informació]]: " + str(plannrf_bd.s
 plannrf_naut = plannrf[~plannrf.id.isin(aut.id.unique())]
 storehash["plannrf_naut_count"] = plannrf_naut.shape[0]
 
-text = text + "** Sense autoritats: " + str(plannrf_naut.shape[0]) + "\n"
+text = text + "** [[/Plannrf_No_Aut|Sense autoritats]]: " + str(plannrf_naut.shape[0]) + "\n"
 
 # Sense base d'informació
 plannrf_nbd = plannrf[~plannrf.id.isin(aut_bd.id.unique())]
 storehash["plannrf_nbd_count"] = plannrf_nbd.shape[0]
 
-text = text + "** Sense bases d'informació: " + str(plannrf_nbd.shape[0]) + "\n"
+text = text + "** [[/Plannrf_No_BD|Sense bases d'informació]]: " + str(plannrf_nbd.shape[0]) + "\n"
 
 # Revisions diverses
 # TODO: Cal fer més diverses i útils
@@ -428,9 +428,13 @@ text = text + "\n* [[/Noplanaut BD|Amb bases d'informació i sense plantilla d'a
 # More pages
 printDfoWiki(plannrf_aut[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Plannrf_Aut")
 printDfoWiki(plannrf_bd[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Plannrf_BD")
+printDfoWiki(plannrf_naut[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Plannrf_No_Aut")
+printDfoWiki(plannrf_nbd[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Plannrf_No_BD")
 
 printDfoWiki(planfva_aut[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Planfva_Aut")
 printDfoWiki(planfva_bd[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Planfva_BD")
+printDfoWiki(planfva_naut[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Planfva_No_Aut")
+printDfoWiki(planfva_nbd[["id", "article"]], site, "Actualització de recompte d'autoritats", autpage+"/Planfva_No_BD")
 
 
 print(text)
