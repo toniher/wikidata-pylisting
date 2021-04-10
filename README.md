@@ -1,6 +1,16 @@
 # wikidata-pylisting
 Scripts per a recuperar dades de Wikidata i combinar-les amb altres API
 
+
+# A la Viquipèdia
+
+* [Seguiment de biografies](https://ca.wikipedia.org/wiki/Usuari:Toniher/Bios)
+  * [Seguiment de biografies de dones](https://ca.wikipedia.org/wiki/Viquiprojecte:Viquidones/Progr%C3%A9s)
+* [Comprovacions de gènere](https://ca.wikipedia.org/wiki/Usuari:Toniher/StatsGender)
+* [Problemàtiques de Wikidata i biografies](https://ca.wikipedia.org/wiki/Usuari:Toniher/CheckBios)
+* [Tauler d'autoritats](https://ca.wikipedia.org/wiki/Usuari:Toniher/Autoritats)
+* [Tauler d'autoritats (específic de dones)](https://ca.wikipedia.org/wiki/Viquiprojecte:Viquidones/Autoritats)
+
 # Instal·lació i ús
 
 ## pyenv
@@ -35,7 +45,7 @@ Query:
 
     curl -X GET https://query.wikidata.org/sparql?query=(SPARQL) -H "Accept: text/tab-separated-values"
 
-# Autoritats
+## Autoritats
 
 * Dumps de Wikidata a: https://dumps.wikimedia.org/wikidatawiki/entities/
 
@@ -52,15 +62,6 @@ Recupera pàgines amb plantilla autoritat:
 
       python afegeixAutoritat.py -config ../allbios.json -file llistatpagines.txt
 
-## Consultes
+# Consultes
 
 * Vegeu ./queries
-
-## A la Viquipèdia
-
-* [Seguiment de biografies](https://ca.wikipedia.org/wiki/Usuari:Toniher/Bios)
-  * [Seguiment de biografies de dones](https://ca.wikipedia.org/wiki/Viquiprojecte:Viquidones/Progr%C3%A9s)
-* [Comprovacions de gènere](https://ca.wikipedia.org/wiki/Usuari:Toniher/StatsGender)
-* [Problemàtiques de Wikidata i biografies](https://ca.wikipedia.org/wiki/Usuari:Toniher/CheckBios)
-* [Tauler d'autoritats](https://ca.wikipedia.org/wiki/Usuari:Toniher/Autoritats)
-* [Tauler d'autoritats (específic de dones)](https://ca.wikipedia.org/wiki/Viquiprojecte:Viquidones/Autoritats)
