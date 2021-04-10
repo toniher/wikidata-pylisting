@@ -116,7 +116,7 @@ extrawhere = ""
 
 extratable = ", `gender` g "
 extrawhere = " and g.id=w.id and g.gender='Q6581072'"
-extrasort = " order by cdate ASC limit 10000"
+extrasort = " order by cdate"
 
 # Get all bios
 bios = pd.read_sql_query("SELECT w.id as id, w.article as article, b.cdate as cdate, b.cuser as cuser from `bios` b, `wikidata` w "+ extratable+" where b.article=w.article "+extrawhere+extrasort, conn)
@@ -127,10 +127,11 @@ storehash["bios_count"] = bios_count
 bios["cdate"] = pd.to_datetime(bios["cdate"])
 bios["year"] = bios["cdate"].dt.year
 bios["month"] = bios["cdate"].dt.month
-bios["weekno"] = bios["cdate"].dt.week
+bios["week"] = bios["cdate"].dt.isocalendar().week
 bios["weekday"] = bios["cdate"].dt.weekday
 print(bios)
 
+print( bios.groupby(["year", "month"])["article"].count().reset_index() )
 
 # print(text)
 #printToWiki(text, site, "Actualització de recompte d'autoritats", evopagew)
