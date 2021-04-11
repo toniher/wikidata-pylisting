@@ -70,16 +70,19 @@ if conn is None:
 
 cur = conn.cursor()
 
+
 def formatWikidata(value):
 
 	value = "[[:d:"+value+"|"+value+"]]"
 	return value
+
 
 def formatCawiki(value):
 
 	text = value.replace("_", " ")
 	value = "[["+value+"|"+text+"]]"
 	return value
+
 
 def printToWiki(toprint, site, summary, targetpage):
 
@@ -89,6 +92,7 @@ def printToWiki(toprint, site, summary, targetpage):
 	page.save(text, summary=summary, minor=False, bot=True)
 
 	return True
+
 
 def printDfoWiki(df, site, summary, targetpage):
 

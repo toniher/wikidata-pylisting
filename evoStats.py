@@ -156,8 +156,17 @@ merged["cumsumw"] = merged["cumsumw"].astype("int64")
 merged["perc"] = merged["numw"] / merged["num"]
 merged["perctotal"] = merged["cumsumw"] / merged["cumsum"]
 
-print(merged)
+print(merged.to_records(index=False))
+
+#text = text + "\n{| class='wikitable sortable'\n"
+
+#text = text + "! " + " !! ".join(merged.columns.to_list()) + "\n"
+#for idx, row in merged.iterrows():
+#	print(row.values)
+#	text = text + "|-\n| " + idx  + "\n"
+
+#text = text + "|}\n"
 
 
-# print(text)
+#print(text)
 #printToWiki(text, site, "Actualització de recompte d'autoritats", evopagew)
