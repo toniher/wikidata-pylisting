@@ -115,11 +115,13 @@ extratable = ""
 extrawhere = ""
 
 extratable = ", `gender` g "
-extrawhere = " and g.id=w.id and g.gender='Q6581072'"
+extrawhere = " and g.id=w.id"
 extrasort = " order by cdate"
 
 # Get all bios
-bios = pd.read_sql_query("SELECT w.id as id, w.article as article, b.cdate as cdate, b.cuser as cuser from `bios` b, `wikidata` w "+ extratable+" where b.article=w.article "+extrawhere+extrasort, conn)
+bios = pd.read_sql_query("SELECT w.id as id, w.article as article, g.gender as gender, b.cdate as cdate, b.cuser as cuser from `bios` b, `wikidata` w "+ extratable+" where b.article=w.article "+extrawhere+extrasort, conn)
+
+# Women = g.gender='Q6581072' We will filter down
 
 bios_count = bios.shape[0]
 storehash["bios_count"] = bios_count
@@ -129,9 +131,33 @@ bios["year"] = bios["cdate"].dt.year
 bios["month"] = bios["cdate"].dt.month
 bios["week"] = bios["cdate"].dt.isocalendar().week
 bios["weekday"] = bios["cdate"].dt.weekday
-print(bios)
+#print(bios)
 
-print( bios.groupby(["year", "month"])["article"].count().reset_index() )
+women = bios[bios.gender.eq("Q6581072")]
+
+numarticles = bios.groupby(["year", "month"])["article"].count().reset_index()
+numarticles.rename(columns={"article": "num"}, inplace=True)
+
+numarticlesw = women.groupby(["year", "month"])["article"].count().reset_index()
+numarticlesw.rename(columns={"article": "num"}, inplace=True)
+
+numarticles["cumsum"] = numarticles["num"].cumsum()
+numarticlesw["cumsum"] = numarticlesw["num"].cumsum()
+
+#print(numarticles)
+#print(numarticlesw)
+
+merged = pd.merge(numarticles, numarticlesw, how="left", on=["year", "month"], suffixes=("", "w"))
+merged["numw"] = merged["numw"].fillna(0)
+merged["numw"] = merged["numw"].astype("int64")
+merged["cumsumw"] = merged["cumsumw"].fillna(0)
+merged["cumsumw"] = merged["cumsumw"].astype("int64")
+
+merged["perc"] = merged["numw"] / merged["num"]
+merged["perctotal"] = merged["cumsumw"] / merged["cumsum"]
+
+print(merged)
+
 
 # print(text)
 #printToWiki(text, site, "Actualització de recompte d'autoritats", evopagew)
