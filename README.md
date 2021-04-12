@@ -6,6 +6,7 @@ Scripts per a recuperar dades de Wikidata i combinar-les amb altres API
 
 * [Seguiment de biografies](https://ca.wikipedia.org/wiki/Usuari:Toniher/Bios)
   * [Seguiment de biografies de dones](https://ca.wikipedia.org/wiki/Viquiprojecte:Viquidones/Progr%C3%A9s)
+* [Evolució de biografies de dones](https://ca.wikipedia.org/wiki/Viquiprojecte:Viquidones/Evoluci%C3%B3)
 * [Comprovacions de gènere](https://ca.wikipedia.org/wiki/Usuari:Toniher/StatsGender)
 * [Problemàtiques de Wikidata i biografies](https://ca.wikipedia.org/wiki/Usuari:Toniher/CheckBios)
 * [Tauler d'autoritats](https://ca.wikipedia.org/wiki/Usuari:Toniher/Autoritats)

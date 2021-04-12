@@ -108,6 +108,21 @@ def printDfoWiki(df, site, summary, targetpage):
 	return True
 
 
+def prepareListToTable(myList):
+	finalList = []
+
+	for el in myList:
+		if isinstance(el, float):
+			if el == 0:
+				finalList.append("0")
+			else:
+				finalList.append("{:.4f}".format(el))
+		else:
+			finalList.append(str(el))
+
+	return finalList
+
+
 storehash = dict()
 
 text = ""
@@ -158,15 +173,42 @@ merged["perctotal"] = merged["cumsumw"] / merged["cumsum"]
 
 print(merged.to_records(index=False))
 
-#text = text + "\n{| class='wikitable sortable'\n"
+table = ""
 
-#text = text + "! " + " !! ".join(merged.columns.to_list()) + "\n"
-#for idx, row in merged.iterrows():
-#	print(row.values)
-#	text = text + "|-\n| " + idx  + "\n"
+table = table + "\n{| class='wikitable sortable'\n"
 
-#text = text + "|}\n"
+tablecolumns = ["any", "mes", "nombre", "acumulat", "nombre - dones", "acumulat - dones", "perc", "perc acumulat"]
+
+timeperiods = []
+numa = []
+acca = []
+numwa = []
+accwa = []
+perca = []
+percwa = []
+
+table = table + "! " + " !! ".join(tablecolumns) + "\n"
+for row in merged.to_records(index=False):
+	prow = row.tolist()
+	table = table + "|-\n| " + " || ".join(prepareListToTable(prow))  + "\n"
+	timeperiods.append(str(prow[0])+"-"+str(prow[1]))
+	numwa.append(str(prow[4]))
+	accwa.append(str(prow[5]))
+	percwa.append(str(prow[7]))
+
+table = table + "|}\n"
+
+text = text + "\n== Biografies de dones totals ==\n"
+text = text + "{{Graph:Chart|width=600|height=200|type=line|colors=purple|xAxisAngle = -40|x="+",".join(timeperiods)+"|y="+",".join(accwa)+"}}\n"
+
+text = text + "\n== Biografies de dones per mes ==\n"
+text = text + "{{Graph:Chart|width=600|height=200|type=line|colors=purple|xAxisAngle = -40|x="+",".join(timeperiods)+"|y="+",".join(numwa)+"}}\n"
+
+text = text + "\n== Percentatge per mes ==\n"
+text = text + "{{Graph:Chart|width=600|height=200|type=line|colors=purple|xAxisAngle = -40|x="+",".join(timeperiods)+"|y="+",".join(percwa)+"}}\n"
 
 
-#print(text)
-#printToWiki(text, site, "Actualització de recompte d'autoritats", evopagew)
+text = text + "\n\n== Taula historial ==\n" + table
+print(text)
+
+printToWiki(text, site, "Actualització de recompte d'autoritats", evopagew)
