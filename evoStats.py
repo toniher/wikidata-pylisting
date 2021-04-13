@@ -144,7 +144,8 @@ storehash["bios_count"] = bios_count
 bios["cdate"] = pd.to_datetime(bios["cdate"])
 bios["year"] = bios["cdate"].dt.year
 bios["month"] = bios["cdate"].dt.month
-bios["week"] = bios["cdate"].dt.isocalendar().week
+#bios["week"] = bios["cdate"].dt.isocalendar().week
+bios["week"] = bios["cdate"].dt.week
 bios["weekday"] = bios["cdate"].dt.weekday
 #print(bios)
 
@@ -211,4 +212,4 @@ text = text + "{{Graph:Chart|width=600|height=200|type=line|colors=purple|xAxisA
 text = text + "\n\n== Taula historial ==\n" + table
 print(text)
 
-printToWiki(text, site, "Actualització de recompte d'autoritats", evopagew)
+printToWiki(text, site, "Actualització evolució biografies", evopagew)
