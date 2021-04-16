@@ -172,21 +172,53 @@ merged["cumsumw"] = merged["cumsumw"].astype("int64")
 merged["perc"] = merged["numw"] / merged["num"]
 merged["perctotal"] = merged["cumsumw"] / merged["cumsum"]
 
-print(merged.to_records(index=False))
+#print(merged.to_records(index=False))
+
+# Snapshot for last year in weeks
+current_month = datetime.now().strftime('%m')
+current_year = int(datetime.now().strftime('%Y'))
+last_year = current_year - 1
+
+span_year = str(last_year) + "-" + current_month
+
+wnumarticles = bios.groupby(["year", "month", "week"])["article"].count().reset_index()
+wnumarticles.rename(columns={"article": "num"}, inplace=True)
+wnumarticles["num"] = wnumarticles["num"].fillna(0)
+
+wnumarticlesw = women.groupby(["year", "month", "week"])["article"].count().reset_index()
+wnumarticlesw.rename(columns={"article": "num"}, inplace=True)
+wnumarticlesw["num"] = wnumarticlesw["num"].fillna(0)
+
+wmerged = pd.merge(wnumarticles, wnumarticlesw, how="left", on=["year", "month", "week"], suffixes=("", "w"))
+
+wmerged["yearmonth"] = wmerged["year"].map(str) + "-" + wmerged['month'].map(str)
+wmerged["yearmonth"] = wmerged["yearmonth"].astype('datetime64[ns]')
+wlast = wmerged[wmerged["yearmonth"] >= span_year]
+wlast["num"] = wlast["num"].astype("int64")
+wlast["numw"] = wlast["numw"].astype("int64")
+wlast["perc"] = wlast["numw"] / wlast["num"]
+
+wlast = wlast.drop(columns=['yearmonth'])
 
 table = ""
+wtable = ""
 
 table = table + "\n{| class='wikitable sortable'\n"
+wtable = wtable + "\n{| class='wikitable sortable'\n"
 
 tablecolumns = ["any", "mes", "nombre", "acumulat", "nombre - dones", "acumulat - dones", "perc", "perc acumulat"]
+wtablecolumns = ["any", "mes", "setmana", "nombre", "nombre - dones", "perc"]
 
 timeperiods = []
+wtimeperiods = []
+
 numa = []
 acca = []
 numwa = []
 accwa = []
 perca = []
 percwa = []
+wnumwa = []
 
 table = table + "! " + " !! ".join(tablecolumns) + "\n"
 for row in merged.to_records(index=False):
@@ -197,7 +229,15 @@ for row in merged.to_records(index=False):
 	accwa.append(str(prow[5]))
 	percwa.append(str(prow[7]))
 
+wtable = wtable + "! " + " !! ".join(wtablecolumns) + "\n"
+for row in wlast.to_records(index=False):
+	prow = row.tolist()
+	wtable = wtable + "|-\n| " + " || ".join(prepareListToTable(prow))  + "\n"
+	wtimeperiods.append(str(prow[0])+"-"+str(prow[1])+"-"+str(prow[2]))
+	wnumwa.append(str(prow[4]))
+
 table = table + "|}\n"
+wtable = wtable + "|}\n"
 
 text = text + "\n== Biografies de dones totals ==\n"
 text = text + "{{Graph:Chart|width=600|height=200|type=line|colors=purple|xAxisAngle = -40|x="+",".join(timeperiods)+"|y="+",".join(accwa)+"}}\n"
@@ -208,8 +248,12 @@ text = text + "{{Graph:Chart|width=600|height=200|type=line|colors=purple|xAxisA
 text = text + "\n== Percentatge per mes ==\n"
 text = text + "{{Graph:Chart|width=600|height=200|type=line|colors=purple|xAxisAngle = -40|x="+",".join(timeperiods)+"|y="+",".join(percwa)+"}}\n"
 
+text = text + "\n== Biografies de dones per setmana el darrer any ==\n"
+text = text + "{{Graph:Chart|width=600|height=200|type=line|colors=purple|xAxisAngle = -40|x="+",".join(wtimeperiods)+"|y="+",".join(wnumwa)+"}}\n"
+
 
 text = text + "\n\n== Taula historial ==\n" + table
+text = text + "\n\n== Taula historial per setmana el darrer any==\n" + wtable
 print(text)
 
 printToWiki(text, site, "Actualització evolució biografies", evopagew)
