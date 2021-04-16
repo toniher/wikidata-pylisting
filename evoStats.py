@@ -153,19 +153,19 @@ women = bios[bios.gender.eq("Q6581072")]
 
 numarticles = bios.groupby(["year", "month"])["article"].count().reset_index()
 numarticles.rename(columns={"article": "num"}, inplace=True)
+numarticles["num"] = numarticles["num"].fillna(0)
 
 numarticlesw = women.groupby(["year", "month"])["article"].count().reset_index()
 numarticlesw.rename(columns={"article": "num"}, inplace=True)
-
-numarticles["cumsum"] = numarticles["num"].cumsum()
-numarticlesw["cumsum"] = numarticlesw["num"].cumsum()
-
-#print(numarticles)
-#print(numarticlesw)
+numarticlesw["num"] = numarticlesw["num"].fillna(0)
 
 merged = pd.merge(numarticles, numarticlesw, how="left", on=["year", "month"], suffixes=("", "w"))
 merged["numw"] = merged["numw"].fillna(0)
 merged["numw"] = merged["numw"].astype("int64")
+
+# Cumsum here, for avoiding problem merging afterwards
+merged["cumsum"] = merged["num"].cumsum()
+merged["cumsumw"] = merged["numw"].cumsum()
 merged["cumsumw"] = merged["cumsumw"].fillna(0)
 merged["cumsumw"] = merged["cumsumw"].astype("int64")
 
