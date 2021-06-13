@@ -66,3 +66,12 @@ Recupera pàgines amb plantilla autoritat:
 # Consultes
 
 * Vegeu ./queries
+
+# Referències
+
+* Presentació a Wiki Workshop 2021 https://slides.com/similis/wikiworkshop-2021-cawiki/
+* Article en PDF https://wikiworkshop.org/2021/papers/Wiki_Workshop_2021_paper_9.pdf
+
+```
+Hermoso Pulido, T. Simple Wikidata Analysis for Tracking and Improving Biographies in Catalan Wikipedia. in Companion Proceedings of the Web Conference 2021 582–583 (Association for Computing Machinery, 2021). doi:10.1145/3442442.3452344.
+```
