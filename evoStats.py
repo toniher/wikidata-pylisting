@@ -193,9 +193,13 @@ wmerged = pd.merge(wnumarticles, wnumarticlesw, how="left", on=["year", "month",
 
 wmerged["yearmonth"] = wmerged["year"].map(str) + "-" + wmerged['month'].map(str)
 wmerged["yearmonth"] = wmerged["yearmonth"].astype('datetime64[ns]')
-wlast = wmerged[wmerged["yearmonth"] >= span_year]
+
+# Copy dataframe instead
+wlast = wmerged[wmerged["yearmonth"] >= span_year].copy()
+
 wlast["num"] = wlast["num"].astype("int64")
 wlast["numw"] = wlast["numw"].astype("int64")
+
 wlast["perc"] = wlast["numw"] / wlast["num"]
 
 wlast = wlast.drop(columns=['yearmonth'])
