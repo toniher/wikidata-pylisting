@@ -83,7 +83,7 @@ def checkWikiDataJSON( item, type="iw", lang="ca" ) :
 		output  = []
 
 		# If item exists and starts with Q
-		if item and item.startswith("Q") :
+		if item and ( item.startswith("Q") or item.startswith("P") ) :
 			url = "https://www.wikidata.org/wiki/Special:EntityData/" + item + ".json"
 
 			if type != "iw" :
