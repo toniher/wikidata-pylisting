@@ -299,8 +299,8 @@ def printCountGenere(toprint, mwclient, checkpage, bios_count):
             "* {{#expr: {{FitaDones}} + 0 }} biografies de dones - [[" + \
             targetpagedones + "|Seguiment]]\n"
 	text = text + "* COMPROVACIONS: [[" + checkgender + \
-		"|Sense gènere]] - [[" + checkmultigender + "|Múltiples gèneres]] - [[" + checkdisgender + "|Desconegut]] \n"
-
+            "|Sense gènere]] - [[" + checkmultigender + \
+            "|Múltiples gèneres]] - [[" + checkdisgender + "|Desconegut]] \n"
 
 	text = text + "''NOTA: Algunes biografies poden tenir correctament assignades més d'un genère.''\n"
 	text = text + "\n----\n"
@@ -352,7 +352,7 @@ c['genere'] = c['genere'].apply(
 	lambda x: "unknown" if x.startswith('_') else x)
 
 c['genere'] = c['genere'].apply(
-	lambda x: "unknown" if x.contains('wikidata.org') else x)
+	lambda x: "unknown" if x.str.contains('wikidata.org') else x)
 
 c['item'] = c['item'].apply(lambda x: x.replace(
 	"http://www.wikidata.org/entity/", ""))
