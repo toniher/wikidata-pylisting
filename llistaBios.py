@@ -271,7 +271,7 @@ def printCountGenere(toprint, mwclient, checkpage, bios_count):
 
 		genere = "NA"
 
-		if row['genere'] == "unknown" or row['genere'] == "0":
+		if row['genere'] == "unknown":
 			genere = "desconegut"
 		elif row['genere'] == "nan":
 			genere = "no assignat"
@@ -299,7 +299,8 @@ def printCountGenere(toprint, mwclient, checkpage, bios_count):
             "* {{#expr: {{FitaDones}} + 0 }} biografies de dones - [[" + \
             targetpagedones + "|Seguiment]]\n"
 	text = text + "* COMPROVACIONS: [[" + checkgender + \
-		"|Sense gènere]] - [[" + checkmultigender + "|Múltiples gèneres]]\n"
+		"|Sense gènere]] - [[" + checkmultigender + "|Múltiples gèneres]] - [[" + checkdisgender + "|Desconegut]] \n"
+
 
 	text = text + "''NOTA: Algunes biografies poden tenir correctament assignades més d'un genère.''\n"
 	text = text + "\n----\n"
@@ -346,8 +347,12 @@ c['article'] = c['article'].apply(lambda x: unquote(
 c['genere'] = c['genere'].astype('str')
 c['genere'] = c['genere'].apply(
 		lambda x: x.replace("http://www.wikidata.org/entity/", ""))
+
 c['genere'] = c['genere'].apply(
 	lambda x: "unknown" if x.startswith('_') else x)
+
+c['genere'] = c['genere'].apply(
+	lambda x: "unknown" if x.contains('wikidata.org') else x)
 
 c['item'] = c['item'].apply(lambda x: x.replace(
 	"http://www.wikidata.org/entity/", ""))
@@ -409,10 +414,6 @@ toprint = toprint[(toprint['cdate'].notnull())]
 clean_duplicates = toprint.drop_duplicates(
 		subset=['item', 'article', 'genere'], keep='last')
 
-# Let's replace all genders that do not start with Q
-clean_duplicates.loc[clean_duplicates["genere"].str.contains(
-	"wikidata.org"), "clean_duplicates"] = "0"
-
 # Clean diplicates, removing several genders
 clean_duplicates_full = toprint.drop_duplicates(
 		subset=['item', 'article'], keep='last')
@@ -448,5 +449,8 @@ groupgender = clean_duplicates.groupby(
 		['item', 'article']).size().reset_index(name='count')
 printCheckWiki(groupgender[groupgender['count'] > 1].sort_values(
 	by='article', ascending=True), mwclient, checkmultigender, False, False)
+
+printCheckWiki(groupgender[groupgender['genere'] == 'unknown'].sort_values(
+	by='article', ascending=True), mwclient, checkdisgender, False, False)
 
 conn.close()
