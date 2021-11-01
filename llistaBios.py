@@ -435,10 +435,15 @@ cleanDb(conn)
 printCheckWiki(current2[(current2['cdate'].isnull())],
                mwclient, checkpage, True)
 
+# Print missing gender
 printCheckWiki(clean_duplicates[clean_duplicates['genere'] == "nan"].sort_values(
 		by='article', ascending=True), mwclient, checkgender, False, False)
 
-# Print Gender studies
+# Print gender marked as unknown
+printCheckWiki(clean_duplicates[clean_duplicates['genere'] == 'unknown'].sort_values(
+	by='article', ascending=True), mwclient, checkdisgender, False, False)
+
+# Print Gender Counts
 countgenere = clean_duplicates[['item', 'genere']].groupby('genere')['item'].count(
 ).reset_index(name='count').sort_values(['count'], ascending=False)
 print(countgenere)
@@ -449,8 +454,5 @@ groupgender = clean_duplicates.groupby(
 		['item', 'article']).size().reset_index(name='count')
 printCheckWiki(groupgender[groupgender['count'] > 1].sort_values(
 	by='article', ascending=True), mwclient, checkmultigender, False, False)
-
-printCheckWiki(groupgender[groupgender['genere'] == 'unknown'].sort_values(
-	by='article', ascending=True), mwclient, checkdisgender, False, False)
 
 conn.close()
