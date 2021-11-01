@@ -352,7 +352,7 @@ c['genere'] = c['genere'].apply(
 	lambda x: "unknown" if x.startswith('_') else x)
 
 c['genere'] = c['genere'].apply(
-	lambda x: "unknown" if x.str.contains('wikidata.org') else x)
+	lambda x: "unknown" if 'wikidata.org' in x else x)
 
 c['item'] = c['item'].apply(lambda x: x.replace(
 	"http://www.wikidata.org/entity/", ""))
