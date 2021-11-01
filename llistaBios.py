@@ -17,8 +17,10 @@ import time
 pp = pprint.PrettyPrinter(indent=4)
 
 # Import JSON configuration
-parser = argparse.ArgumentParser(description="""Script for testing MediaWiki API""")
-parser.add_argument("-config",help="""Path to a JSON file with configuration options!""")
+parser = argparse.ArgumentParser(
+		description="""Script for testing MediaWiki API""")
+parser.add_argument(
+    "-config", help="""Path to a JSON file with configuration options!""")
 args = parser.parse_args()
 
 
@@ -34,6 +36,7 @@ milestonepagedones = "Plantilla:FitaDones"
 
 checkpage = "User:Toniher/CheckBios"
 checkgender = "User:Toniher/CheckGender"
+checkdisgender = "User:Toniher/CheckDisGender"
 checkmultigender = "User:Toniher/CheckMultiGender"
 
 countgenderpage = "User:Toniher/StatsGender"
@@ -41,36 +44,37 @@ countgenderpage = "User:Toniher/StatsGender"
 conn = None
 
 if "config" in args:
-		if args.config is not None:
-				with open(args.config) as json_data_file:
-						data = json.load(json_data_file)
+	if args.config is not None:
+			with open(args.config) as json_data_file:
+					data = json.load(json_data_file)
 
 if "mw" in data:
-		if "host" in data["mw"]:
-				host = data["mw"]["host"]
+	if "host" in data["mw"]:
+			host = data["mw"]["host"]
 		if "user" in data["mw"]:
-				user = data["mw"]["user"]
+			user = data["mw"]["user"]
 		if "password" in data["mw"]:
-				pwd = data["mw"]["password"]
+			pwd = data["mw"]["password"]
 		if "protocol" in data["mw"]:
-				protocol = data["mw"]["protocol"]
+			protocol = data["mw"]["protocol"]
 
 if "mysql" in data:
-	conn = MySQLdb.connect(host=data["mysql"]["host"], user=data["mysql"]["user"], passwd=data["mysql"]["password"], db=data["mysql"]["database"], use_unicode=True, charset='utf8mb4', init_command='SET NAMES utf8mb4')
+	conn = MySQLdb.connect(host=data["mysql"]["host"], user=data["mysql"]["user"], passwd=data["mysql"]["password"],
+	                       db=data["mysql"]["database"], use_unicode=True, charset='utf8mb4', init_command='SET NAMES utf8mb4')
 
 if "targetpage" in data:
-		targetpage = data["targetpage"]
+	targetpage = data["targetpage"]
 
 if "milestonepage" in data:
-		milestonepage = data["milestonepage"]
+	milestonepage = data["milestonepage"]
 
 if "checkpage" in data:
-		checkpage = data["checkpage"]
+	checkpage = data["checkpage"]
 
 site = mwclient.Site(host, scheme=protocol)
-if user and pwd :
-		# Login parameters
-		site.login(user, pwd)
+if user and pwd:
+	# Login parameters
+	site.login(user, pwd)
 
 if conn is None:
 	print("CONNECTION PROBLEM")
@@ -78,15 +82,15 @@ if conn is None:
 
 cur = conn.cursor()
 
-def checkWikiDataJSON( item, type="iw", lang="ca" ) :
+def checkWikiDataJSON(item, type="iw", lang="ca" ) :
 
-		output  = []
+	output  = []
 
 		# If item exists and starts with Q
-		if item and ( item.startswith("Q") or item.startswith("P") ) :
+		if item and (item.startswith("Q") or item.startswith("P") ) :
 			url = "https://www.wikidata.org/wiki/Special:EntityData/" + item + ".json"
 
-			if type != "iw" :
+			if type != "iw":
 				print(url)
 
 			req = request.Request(url)
@@ -98,70 +102,69 @@ def checkWikiDataJSON( item, type="iw", lang="ca" ) :
 			##parcing json
 			entitycont = cont['entities'][item]
 
-			if type == "label" :
-				if 'labels' in entitycont :
-					if lang in entitycont['labels'] :
-						output.append( entitycont['labels'][lang]['value'] )
-			else :
-				if 'sitelinks' in entitycont :
-					output = list( entitycont['sitelinks'] )
+			if type == "label":
+				if 'labels' in entitycont:
+					if lang in entitycont['labels']:
+						output.append(entitycont['labels'][lang]['value'] )
+			else:
+				if 'sitelinks' in entitycont:
+					output = list(entitycont['sitelinks'] )
 
-			time.sleep( 0.2 )
+			time.sleep(0.2 )
 		return output
 
 
-def insertInDB( new_stored, conn ):
+def insertInDB(new_stored, conn ):
 
-		c = conn.cursor()
+	c = conn.cursor()
 
 		for index, row in new_stored.iterrows():
 
 			# Handling Timezone
-			row['cdate'] = row['cdate'].replace( "T", " ")
-			row['cdate'] = row['cdate'].replace( "Z", "")
+			row['cdate'] = row['cdate'].replace("T", " ")
+			row['cdate'] = row['cdate'].replace("Z", "")
 
-			c.execute( "SELECT * from bios where BINARY article = %s ", [ row['article'] ] )
+			c.execute("SELECT * from bios where BINARY article = %s ", [ row['article'] ] )
 			if c.rowcount > 0:
 				print("UPDATE " + row['article'])
-				c.execute( "UPDATE `bios` SET `cdate` = %s, `cuser` = %s where BINARY article = %s ", [ row['cdate'], row['cuser'], row['article'] ] )
-			else :
+				c.execute("UPDATE `bios` SET `cdate` = %s, `cuser` = %s where BINARY article = %s ", [ row['cdate'], row['cuser'], row['article'] ] )
+			else:
 				print("INSERT " + row['article'])
-				c.execute( "INSERT INTO `bios` (`article`, `cdate`, `cuser`) VALUES (%s, %s, %s)", [ row['article'], row['cdate'], row['cuser'] ] )
-
+				c.execute("INSERT INTO `bios` (`article`, `cdate`, `cuser`) VALUES (%s, %s, %s)", [ row['article'], row['cdate'], row['cuser'] ] )
 
 		conn.commit()
 
 		return True
 
-def printToWiki( toprint, mwclient, targetpage, milestonepage ):
+def printToWiki(toprint, mwclient, targetpage, milestonepage ):
 
-		count = toprint.shape[0]
+	count = toprint.shape[0]
 		i = 0
 
 		print(count)
 
-		text = "{| class='wikitable sortable' \n!" + "ordre !! " + " !! ".join( toprint.columns.values.tolist() ) + "\n"
+		text = "{| class='wikitable sortable' \n!" + "ordre !! " + " !! ".join(toprint.columns.values.tolist() ) + "\n"
 
 		for index, row in toprint.head(100).iterrows():
 			num = count - i
-			text = text + "|-\n|" + str( num ) + " || " + "[[d:" + row['item'] + "|" + row['item'] + "]]" + " || " + row['genere'] + " || " + " [["+row['article']+"]]" + " || " + str( row['cdate'] )  + " || " +  "{{u|"+str( row['cuser'] ) + "}}" + "\n"
+			text = text + "|-\n|" + str(num ) + " || " + "[[d:" + row['item'] + "|" + row['item'] + "]]" + " || " + row['genere'] + " || " + " [["+row['article']+"]]" + " || " + str( row['cdate'] )  + " || " +  "{{u|"+str( row['cuser'] ) + "}}" + "\n"
 			i = i + 1
 
 		text = text + "|}"
 
-		page = site.pages[ targetpage ]
-		page.save( text, summary='Bios', minor=False, bot=True )
+		page = site.pages[targetpage ]
+		page.save(text, summary='Bios', minor=False, bot=True )
 
-		if milestonepage :
-			sittext = str( count ) + "\n<noinclude>[[Categoria:Plantilles]]</noinclude>"
-			page = site.pages[ milestonepage ]
-			page.save( sittext, summary='Bios', minor=False, bot=True )
+		if milestonepage:
+			sittext = str(count ) + "\n<noinclude>[[Categoria:Plantilles]]</noinclude>"
+			page = site.pages[milestonepage ]
+			page.save(sittext, summary='Bios', minor=False, bot=True )
 
 		return True
 
-def saveToDb( toprint, conn ):
+def saveToDb(toprint, conn ):
 
-		c = conn.cursor()
+	c = conn.cursor()
 
 		c.execute("DROP TABLE IF EXISTS `wikidata`;")
 		c.execute("CREATE TABLE IF NOT EXISTS `wikidata` ( `id` varchar(24), `article` VARCHAR(255) ) default charset='utf8mb4' collate='utf8mb4_bin';")
@@ -177,67 +180,66 @@ def saveToDb( toprint, conn ):
 		c.execute("CREATE TABLE IF NOT EXISTS `run` (  `date` datetime DEFAULT CURRENT_TIMESTAMP, `name` VARCHAR(25), PRIMARY KEY (`date`, `name`) ) ;")
 		c.execute("INSERT INTO `run` (`name`) VALUES (%s)", ["bios"])
 
-
 		for index, row in toprint.iterrows():
 
 			if row['genere'] == "nan":
 				row['genere'] = None
 
-			c.execute( "INSERT INTO `gender` (`id`, `gender`) VALUES (%s, %s)", [ row['item'], row['genere'] ] )
+			c.execute("INSERT INTO `gender` (`id`, `gender`) VALUES (%s, %s)", [ row['item'], row['genere'] ] )
 
 		conn.commit()
 
 		toprint = toprint.drop_duplicates(subset=['item', 'article'], keep='last')
 		for index, row in toprint.iterrows():
 
-			c.execute( "INSERT INTO `wikidata` (`id`, `article`) VALUES (%s, %s)", [ row['item'], row['article'] ] )
+			c.execute("INSERT INTO `wikidata` (`id`, `article`) VALUES (%s, %s)", [ row['item'], row['article'] ] )
 
 		conn.commit()
 
 		return True
 
-def cleanDb( conn ):
+def cleanDb(conn ):
 
 	c = conn.cursor()
-	c.execute( "SELECT * from wikidata" )
+	c.execute("SELECT * from wikidata" )
 
 	if c.rowcount > 0:
 		# TODO Proceed cleaning
-		c.execute( "delete from bios where article in (select b.article from bios b left join wikidata w on b.article=w.article where w.id is null order by b.article ) ;")
+		c.execute("delete from bios where article in (select b.article from bios b left join wikidata w on b.article=w.article where w.id is null order by b.article ) ;")
 
 	conn.commit()
 
 	return True
 
-def printCheckWiki( toprint, mwclient, checkpage, checkwd=True, checkgen=True ):
+def printCheckWiki(toprint, mwclient, checkpage, checkwd=True, checkgen=True ):
 
 	if checkgen:
-		header = ['wikidata', 'genere', 'article' ]
+		header = ['wikidata', 'genere', 'article']
 	else:
-		header = ['wikidata', 'article' ]
+		header = ['wikidata', 'article']
 
 	if checkwd:
-		text = "{| class='wikitable sortable' \n!" + " !! ".join( header ) + "!! iwiki !! iwikicount\n"
-	else :
-		text = "{| class='wikitable sortable' \n!" + " !! ".join( header ) + "\n"
+		text = "{| class='wikitable sortable' \n!" + " !! ".join(header ) + "!! iwiki !! iwikicount\n"
+	else:
+		text = "{| class='wikitable sortable' \n!" + " !! ".join(header ) + "\n"
 
 	for index, row in toprint.iterrows():
 
 		genstr = ""
 		if checkgen:
-			genstr = " || " + str( row['genere'] )
+			genstr = " || " + str(row['genere'] )
 
 		if checkwd is True:
-			iwiki = checkWikiDataJSON( str( row['item'] ), "iw" )
-			iwikicount = len( iwiki )
-			text = text + "|-\n|" + "[[d:" + str( row['item'] ) + "|" + str( row['item'] ) + "]]" + genstr + " || " + " [["+str( row['article'] )+"]]" + " || " + ", ".join( iwiki ) + "|| " + str( iwikicount ) + "\n"
-		else :
-			text = text + "|-\n|" + "[[d:" + str( row['item'] ) + "|" + str( row['item'] ) + "]]" + genstr + " || " + " [["+str( row['article'] )+"]]" + "\n"
+			iwiki = checkWikiDataJSON(str( row['item'] ), "iw" )
+			iwikicount = len(iwiki )
+			text = text + "|-\n|" + "[[d:" + str(row['item'] ) + "|" + str( row['item'] ) + "]]" + genstr + " || " + " [["+str( row['article'] )+"]]" + " || " + ", ".join( iwiki ) + "|| " + str( iwikicount ) + "\n"
+		else:
+			text = text + "|-\n|" + "[[d:" + str(row['item'] ) + "|" + str( row['item'] ) + "]]" + genstr + " || " + " [["+str( row['article'] )+"]]" + "\n"
 
 	text = text + "|}"
 
-	page = site.pages[ checkpage ]
-	page.save( text, summary='Bios', minor=False, bot=True )
+	page = site.pages[checkpage ]
+	page.save(text, summary='Bios', minor=False, bot=True )
 
 	return True
 
@@ -245,43 +247,46 @@ def printCheckWiki( toprint, mwclient, checkpage, checkwd=True, checkgen=True ):
 def printCountGenere(toprint, mwclient, checkpage, bios_count):
 
 	list_generes = []
-	text = "{| class='wikitable sortable' \n!" + " !! ".join( ['gènere', 'recompte', 'percentatge' ] ) + "\n"
+	text = "{| class='wikitable sortable' \n!" + " !! ".join(['gènere', 'recompte', 'percentatge' ] ) + "\n"
 
 	for index, row in toprint.iterrows():
 
 		genere = "NA"
 
-		if row['genere'] == "unknown" :
+		if row['genere'] == "unknown" or row['genere'] == "0":
 			genere = "desconegut"
-		elif row['genere'] == "nan" :
+		elif row['genere'] == "nan":
 			genere = "no assignat"
-		else :
+		else:
 			genereA = checkWikiDataJSON(str(row['genere']), "label")
-			if len( genereA ) > 0 :
+			if len(genereA ) > 0 :
 				genere = genereA[0]
 			else:
 				genere = row['genere']
 
 		list_generes.append(genere)
-		perc = ( row['count'] / bios_count ) * 100
+		perc = (row['count'] / bios_count ) * 100
 		percstr = "%2.3f" % perc
-		text = text + "|-\n| [[" + str( genere ) + "]] || " + str( row['count'] ) + "||" + str(percstr) + "\n"
+		text = text + "|-\n| [[" + str(genere ) + "]] || " + str( row['count'] ) + "||" + str(percstr) + "\n"
 
 	text = text + "|}"
 
 	text = text + "\n----\n"
 
-	text = text + "* {{#expr: {{NumBios}} + 0 }} biografies - [[" + targetpage + "|Seguiment]]\n"
-	text = text + "* {{#expr: {{FitaDones}} + 0 }} biografies de dones - [[" + targetpagedones + "|Seguiment]]\n"
-	text = text + "* COMPROVACIONS: [["+ checkgender +"|Sense gènere]] - [[" + checkmultigender + "|Múltiples gèneres]]\n"
+	text = text + \
+			"* {{#expr: {{NumBios}} + 0 }} biografies - [[" + targetpage + "|Seguiment]]\n"
+	text = text + \
+			"* {{#expr: {{FitaDones}} + 0 }} biografies de dones - [[" + targetpagedones + "|Seguiment]]\n"
+	text = text + "* COMPROVACIONS: [[" + checkgender + "|Sense gènere]] - [[" + checkmultigender + "|Múltiples gèneres]]\n"
 
 	text = text + "''NOTA: Algunes biografies poden tenir correctament assignades més d'un genère.''\n"
 	text = text + "\n----\n"
 
 	list_count = map(lambda x: str(x), toprint['count'].tolist())
-	text = text + "{{Graph:Chart|width=100|height=100|type=pie|legend=Llegenda|x="+",".join(list_generes)+"|y="+",".join(list_count)+"|showValues=}}"
+	text = text + "{{Graph:Chart|width=100|height=100|type=pie|legend=Llegenda|x="+ \
+			",".join(list_generes)+"|y="+",".join(list_count)+"|showValues=}}"
 
-	page = site.pages[ checkpage ]
+	page = site.pages[checkpage ]
 	page.save(text, summary='Recompte gènere', minor=False, bot=True)
 
 	return True
@@ -308,17 +313,19 @@ headers = {
 	'Accept': 'text/csv',
 	'User-Agent': 'darreresBio/0.1.0 (https://github.com/WikimediaCAT/wikidata-pylisting; toniher@wikimedia.cat) Python/3.7',
 }
-params = { 'query':  query }
-response = requests.get('https://query.wikidata.org/sparql', headers=headers, params=params)
+params = {'query':  query }
+response = requests.get('https://query.wikidata.org/sparql',
+                        headers=headers, params=params)
 
-c=pd.read_csv(io.StringIO(response.content.decode('utf-8')))
+c = pd.read_csv(io.StringIO(response.content.decode('utf-8')))
 
-c['article'] = c['article'].apply(lambda x: unquote( x.replace("https://ca.wikipedia.org/wiki/", "") ) )
+c['article'] = c['article'].apply(lambda x: unquote(x.replace("https://ca.wikipedia.org/wiki/", "") ) )
 c['genere'] = c['genere'].astype('str')
-c['genere'] = c['genere'].apply(lambda x: x.replace("http://www.wikidata.org/entity/", ""))
-c['genere'] = c['genere'].apply(lambda x: "unknown" if x.startswith( '_' ) else x)
+c['genere'] = c['genere'].apply(
+		lambda x: x.replace("http://www.wikidata.org/entity/", ""))
+c['genere'] = c['genere'].apply(lambda x: "unknown" if x.startswith('_' ) else x)
 
-c['item'] = c['item'].apply( lambda x: x.replace("http://www.wikidata.org/entity/", "") )
+c['item'] = c['item'].apply(lambda x: x.replace("http://www.wikidata.org/entity/", "") )
 
 # Double check outcome
 c.to_csv('/tmp/allbios.csv', index=False)
@@ -334,26 +341,26 @@ missing = current[(current['cuser'].isnull()) & (current['cdate'].isnull())]
 print("MISSING CUSER OR CDATE")
 print(missing)
 
-new_stored = pd.DataFrame(columns = ['article', 'cdate', 'cuser'])
+new_stored = pd.DataFrame(columns= ['article', 'cdate', 'cuser'])
 
 for index, row in missing.iterrows():
-		titles = row['article']
-		print( titles )
-		result = site.api('query', prop='revisions', rvprop='timestamp|user', rvdir='newer', rvlimit=1, titles=titles )
+	titles = row['article']
+		print(titles )
+		result = site.api('query', prop='revisions', rvprop='timestamp|user', rvdir='newer', rvlimit=1, titles=titles)
 		for page in result['query']['pages'].values():
-				if 'revisions' in page:
-						if len( page['revisions'] ) > 0  :
+			if 'revisions' in page:
+						if len(page['revisions'] ) > 0  :
 
-								timestamp = None
+							timestamp = None
 								userrev = None
 
-								if 'timestamp' in page['revisions'][0] :
-										timestamp = page['revisions'][0]['timestamp']
-								if 'user' in page['revisions'][0] :
-										userrev = page['revisions'][0]['user']
+								if 'timestamp' in page['revisions'][0]:
+									timestamp = page['revisions'][0]['timestamp']
+								if 'user' in page['revisions'][0]:
+									userrev = page['revisions'][0]['user']
 
-								new_stored = new_stored.append( { 'article': titles, 'cdate': timestamp, 'cuser': userrev  }, ignore_index=True )
-								time.sleep( 0.1 )
+								new_stored = new_stored.append({ 'article': titles, 'cdate': timestamp, 'cuser': userrev  }, ignore_index=True )
+								time.sleep(0.1 )
 
 print("MISSING WITH EXTRA INFO FROM API")
 print(new_stored)
@@ -372,9 +379,15 @@ toprint = current2.sort_values(by='cdate', ascending=False)
 toprint = toprint[(toprint['cdate'].notnull())]
 
 # Clean duplicates, keeping gender
-clean_duplicates = toprint.drop_duplicates(subset=['item', 'article', 'genere'], keep='last')
+clean_duplicates = toprint.drop_duplicates(
+		subset=['item', 'article', 'genere'], keep='last')
+
+# Let's replace all genders that do not start with Q
+clean_duplicates.loc[clean_duplicates["genere"].str.contains("wikidata.org"), "clean_duplicates"] = "0"
+
 # Clean diplicates, removing several genders
-clean_duplicates_full = toprint.drop_duplicates(subset=['item', 'article'], keep='last')
+clean_duplicates_full = toprint.drop_duplicates(
+		subset=['item', 'article'], keep='last')
 
 bios_count = clean_duplicates_full.shape[0]
 
@@ -390,17 +403,20 @@ saveToDb(clean_duplicates, conn)
 cleanDb(conn)
 
 # Moved pages
-printCheckWiki(current2[(current2['cdate'].isnull())], mwclient, checkpage, True)
+printCheckWiki(current2[(current2['cdate'].isnull())],
+               mwclient, checkpage, True)
 
-printCheckWiki(clean_duplicates[clean_duplicates['genere'] == "nan"].sort_values(by='article', ascending=True), mwclient, checkgender, False, False)
+printCheckWiki(clean_duplicates[clean_duplicates['genere'] == "nan"].sort_values(
+		by='article', ascending=True), mwclient, checkgender, False, False)
 
 # Print Gender studies
-countgenere = clean_duplicates[['item','genere']].groupby('genere')['item'].count().reset_index(name='count').sort_values(['count'], ascending=False)
+countgenere = clean_duplicates[['item', 'genere']].groupby('genere')['item'].count().reset_index(name='count').sort_values(['count'], ascending=False)
 print(countgenere)
 
 printCountGenere(countgenere, mwclient, countgenderpage, bios_count)
 
-groupgender = clean_duplicates.groupby(['item', 'article']).size().reset_index(name='count')
-printCheckWiki(groupgender[groupgender['count'] > 1 ].sort_values(by='article', ascending=True), mwclient, checkmultigender, False, False)
+groupgender = clean_duplicates.groupby(
+		['item', 'article']).size().reset_index(name='count')
+printCheckWiki(groupgender[groupgender['count'] > 1].sort_values(by='article', ascending=True), mwclient, checkmultigender, False, False)
 
 conn.close()
