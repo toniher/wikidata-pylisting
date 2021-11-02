@@ -21,13 +21,22 @@ parser = argparse.ArgumentParser(
     description="""Script for testing MediaWiki API""")
 parser.add_argument(
     "-config", help="""Path to a JSON file with configuration options!""")
+parser.add_argument(
+    "-lang", help="""Wiki language to use""")
 args = parser.parse_args()
 
+# Default wiki language
+wikilang = "ca"
 
 host = "ca.wikipedia.org"
 user = None
 password = None
 protocol = "https"
+
+if "lang" in args:
+    wikilang = args.lang
+    host = wikilang + ".wikipedia.org"
+
 data = {}
 targetpage = "User:Toniher/Bios"
 milestonepage = "Plantilla:NumBios"
@@ -85,34 +94,35 @@ cur = conn.cursor()
 
 def checkWikiDataJSON(item, type="iw", lang="ca"):
 
-	output = []
+    output = []
 
-	# If item exists and starts with Q
-	if item and (item.startswith("Q") or item.startswith("P")):
-		url = "https://www.wikidata.org/wiki/Special:EntityData/" + item + ".json"
+    # If item exists and starts with Q
+    if item and (item.startswith("Q") or item.startswith("P")):
+        url = "https://www.wikidata.org/wiki/Special:EntityData/" + item + ".json"
 
-		if type != "iw":
-			print(url)
+        if type != "iw":
+            print(url)
 
-		req = request.Request(url)
+        req = request.Request(url)
 
-		##parsing response
-		r = request.urlopen(req).read()
-		cont = json.loads(r.decode('utf-8'))
+        # parsing response
+        r = request.urlopen(req).read()
+        cont = json.loads(r.decode('utf-8'))
 
-		##parcing json
-		entitycont = cont['entities'][item]
+        # parsing json
+        entitycont = cont['entities'][item]
 
-		if type == "label":
-			if 'labels' in entitycont:
-				if lang in entitycont['labels']:
-					output.append(entitycont['labels'][lang]['value'])
-		else:
-			if 'sitelinks' in entitycont:
-				output = list(entitycont['sitelinks'])
+        if type == "label":
+            if 'labels' in entitycont:
+                if lang in entitycont['labels']:
+                    output.append(entitycont['labels'][lang]['value'])
+        else:
+            if 'sitelinks' in entitycont:
+                output = list(entitycont['sitelinks'])
 
-		time.sleep(0.2)
-	return output
+        time.sleep(0.2)
+
+    return output
 
 
 def insertInDB(new_stored, conn):
@@ -223,7 +233,7 @@ def cleanDb(conn):
 	return True
 
 
-def printCheckWiki(toprint, mwclient, checkpage, checkwd=True, checkgen=True):
+def printCheckWiki(toprint, mwclient, checkpage, checkwd=True, checkgen=True, lang="ca"):
 
 	if checkgen:
 		header = ['wikidata', 'genere', 'article']
@@ -243,7 +253,7 @@ def printCheckWiki(toprint, mwclient, checkpage, checkwd=True, checkgen=True):
 			genstr = " || " + str(row['genere'])
 
 		if checkwd is True:
-			iwiki = checkWikiDataJSON(str(row['item']), "iw")
+			iwiki = checkWikiDataJSON(str(row['item']), "iw", lang)
 			iwikicount = len(iwiki)
 			text = text + "|-\n|" + "[[d:" + str(row['item']) + "|" + str(row['item']) + "]]" + genstr + " || " + \
                             " [["+str(row['article'])+"]]" + " || " + \
@@ -261,7 +271,7 @@ def printCheckWiki(toprint, mwclient, checkpage, checkwd=True, checkgen=True):
 	return True
 
 
-def printCountGenere(toprint, mwclient, checkpage, bios_count):
+def printCountGenere(toprint, mwclient, checkpage, bios_count, wikilang="ca"):
 
 	list_generes = []
 	text = "{| class='wikitable sortable' \n!" + \
@@ -276,7 +286,7 @@ def printCountGenere(toprint, mwclient, checkpage, bios_count):
 		elif row['genere'] == "nan":
 			genere = "no assignat"
 		else:
-			genereA = checkWikiDataJSON(str(row['genere']), "label")
+			genereA = checkWikiDataJSON(str(row['genere']), "label", wikilang)
 			if len(genereA) > 0:
 				genere = genereA[0]
 			else:
@@ -315,8 +325,9 @@ def printCountGenere(toprint, mwclient, checkpage, bios_count):
 	return True
 
 
-cur.execute("CREATE TABLE IF NOT EXISTS `bios` (  `article` VARCHAR(255), `cdate` datetime, `cuser` VARCHAR(255) ) default charset='utf8mb4' collate='utf8mb4_bin';")
+cur.execute("CREATE TABLE IF NOT EXISTS `bios` ( `article` VARCHAR(255), `lang` VARCHAR(10), `cdate` datetime, `cuser` VARCHAR(255) ) default charset='utf8mb4' collate='utf8mb4_bin';")
 cur.execute("CREATE INDEX IF NOT EXISTS `idx_article` ON bios (`article`);")
+cur.execute("CREATE INDEX IF NOT EXISTS `idx_lang` ON bios (`lang`);")
 cur.execute("CREATE INDEX IF NOT EXISTS `idx_cdate` ON bios (`cdate`);")
 cur.execute("CREATE INDEX IF NOT EXISTS `idx_cuser` ON bios (`cuser`);")
 
@@ -324,13 +335,13 @@ query = """
 SELECT ?item ?genere ?article WHERE {
   ?item wdt:P31 wd:Q5.
   ?article schema:about ?item .
-  ?article schema:isPartOf <https://ca.wikipedia.org/> .
-  #SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],ca" } .
+  ?article schema:isPartOf <https://{host}/> .
+  #SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],{lang}" } .
   OPTIONAL {
     ?item wdt:P21 ?genere .
   }
 } ORDER BY ?article
-"""
+""".format(host=host, lang=wikilang)
 
 headers = {
 	'Accept': 'text/csv',
@@ -448,7 +459,7 @@ countgenere = clean_duplicates[['item', 'genere']].groupby('genere')['item'].cou
 ).reset_index(name='count').sort_values(['count'], ascending=False)
 print(countgenere)
 
-printCountGenere(countgenere, mwclient, countgenderpage, bios_count)
+printCountGenere(countgenere, mwclient, countgenderpage, bios_count, wikilang)
 
 groupgender = clean_duplicates.groupby(
 		['item', 'article']).size().reset_index(name='count')
