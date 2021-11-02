@@ -121,33 +121,33 @@ def checkWikiDataJSON(item, type="iw", lang="ca"):
                 output = list(entitycont['sitelinks'])
 
         time.sleep(0.2)
-
     return output
 
 
-def insertInDB(new_stored, conn):
+def insertInDB(new_stored, lang, conn):
 
-	c = conn.cursor()
+    c = conn.cursor()
 
-	for index, row in new_stored.iterrows():
+    for index, row in new_stored.iterrows():
 
-		# Handling Timezone
-		row['cdate'] = row['cdate'].replace("T", " ")
-		row['cdate'] = row['cdate'].replace("Z", "")
+        # Handling Timezone
+        row['cdate'] = row['cdate'].replace("T", " ")
+        row['cdate'] = row['cdate'].replace("Z", "")
 
-		c.execute("SELECT * from bios where BINARY article = %s ", [row['article']])
-		if c.rowcount > 0:
-			print("UPDATE " + row['article'])
-			c.execute("UPDATE `bios` SET `cdate` = %s, `cuser` = %s where BINARY article = %s ", [
-			          row['cdate'], row['cuser'], row['article']])
-		else:
-			print("INSERT " + row['article'])
-			c.execute("INSERT INTO `bios` (`article`, `cdate`, `cuser`) VALUES (%s, %s, %s)", [
-			          row['article'], row['cdate'], row['cuser']])
+        c.execute("SELECT * from bios where BINARY article = %s and lang = %s",
+                  [row['article'], lang])
+        if c.rowcount > 0:
+            print("UPDATE " + row['article'])
+            c.execute("UPDATE `bios` SET `cdate` = %s, `cuser` = %s where BINARY article = %s and lang = %s", [
+                      row['cdate'], row['cuser'], row['article'], lang])
+        else:
+            print("INSERT " + row['article'])
+            c.execute("INSERT INTO `bios` (`article`, `lang`, `cdate`, `cuser`) VALUES (%s, %s, %s, %s)", [
+                      row['article'], lang, row['cdate'], row['cuser']])
 
-	conn.commit()
+    conn.commit()
 
-	return True
+    return True
 
 
 def printToWiki(toprint, mwclient, targetpage, milestonepage):
