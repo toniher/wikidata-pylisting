@@ -34,8 +34,9 @@ password = None
 protocol = "https"
 
 if "lang" in args:
-    wikilang = args.lang
-    host = wikilang + ".wikipedia.org"
+    if args.lang is not None:
+        wikilang = args.lang
+        host = wikilang + ".wikipedia.org"
 
 data = {}
 targetpage = "User:Toniher/Bios"
