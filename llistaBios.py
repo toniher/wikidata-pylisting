@@ -332,16 +332,19 @@ cur.execute("CREATE INDEX IF NOT EXISTS `idx_lang` ON bios (`lang`);")
 cur.execute("CREATE INDEX IF NOT EXISTS `idx_cdate` ON bios (`cdate`);")
 cur.execute("CREATE INDEX IF NOT EXISTS `idx_cuser` ON bios (`cuser`);")
 
-query = """SELECT ?item ?genere ?article WHERE {
-?item wdt:P31 wd:Q5.
-?article schema:about ?item .
-?article schema:isPartOf <https://{1}/> .
-#SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],{2}" } .
-OPTIONAL {
-?item wdt:P21 ?genere .
-}
+query = """
+SELECT ?item ?genere ?article WHERE {
+    ?item wdt:P31 wd:Q5.
+    ?article schema:about ?item .
+    ?article schema:isPartOf <https://{host}/> .
+    #SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],{lang}" } .
+    OPTIONAL {
+        ?item wdt:P21 ?genere .
+    }
 } ORDER BY ?article
-""".format(host, wikilang)
+"""
+
+query = query.format(host=host, lang=wikilang)
 
 headers = {
 	'Accept': 'text/csv',
