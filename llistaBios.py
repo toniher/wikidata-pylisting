@@ -333,8 +333,7 @@ cur.execute("CREATE INDEX IF NOT EXISTS `idx_cdate` ON bios (`cdate`);")
 cur.execute("CREATE INDEX IF NOT EXISTS `idx_cuser` ON bios (`cuser`);")
 
 query = """
-SELECT ?item ?genere ?article WHERE {
-?item wdt:P31 wd:Q5 .
+SELECT ?item ?genere ?article WHERE { ?item wdt:P31 wd:Q5 .
 ?article schema:about ?item .
 ?article schema:isPartOf <https://{host}/> .
 OPTIONAL {
