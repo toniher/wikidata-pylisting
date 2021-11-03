@@ -410,7 +410,7 @@ print("MISSING WITH EXTRA INFO FROM API")
 print(new_stored)
 
 # INSERT or REPLACE sqlite new_stored
-insertInDB(new_stored, conn)
+insertInDB(new_stored, wikilang, conn)
 
 # Repeat stored
 stored2 = pd.read_sql_query("SELECT * from `bios`", conn)
