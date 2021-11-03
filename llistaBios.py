@@ -334,7 +334,7 @@ cur.execute("CREATE INDEX IF NOT EXISTS `idx_cuser` ON bios (`cuser`);")
 
 query = """
 SELECT ?item ?genere ?article WHERE {
-    ?item wdt:P31 wd:Q5.
+    ?item wdt:P31 wd:Q5 .
     ?article schema:about ?item .
     ?article schema:isPartOf <https://{host}/> .
     #SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],{lang}" } .
