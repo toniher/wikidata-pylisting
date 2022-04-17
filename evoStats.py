@@ -144,8 +144,8 @@ storehash["bios_count"] = bios_count
 bios["cdate"] = pd.to_datetime(bios["cdate"])
 bios["year"] = bios["cdate"].dt.year
 bios["month"] = bios["cdate"].dt.month
-#bios["week"] = bios["cdate"].dt.isocalendar().week
-bios["week"] = bios["cdate"].dt.week
+bios["week"] = bios["cdate"].dt.isocalendar().week
+#bios["week"] = bios["cdate"].dt.week
 bios["weekday"] = bios["cdate"].dt.weekday
 #print(bios)
 
