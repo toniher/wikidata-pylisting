@@ -3,7 +3,7 @@ set -ueo pipefail
 
 CUR=$(pwd)
 DATE=$(python getDateLastDump.py)
-DOWN=/projects/wikidata
+DOWN=/data/wikidata
 CONFJSON="../allbios.json"
 
 cd $DOWN
