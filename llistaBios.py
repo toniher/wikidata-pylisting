@@ -19,9 +19,11 @@ pp = pprint.PrettyPrinter(indent=4)
 # Import JSON configuration
 parser = argparse.ArgumentParser(description="""Script for testing MediaWiki API""")
 parser.add_argument(
-    "-config", help="""Path to a JSON file with configuration options!"""
+    "--config", help="""Path to a JSON file with configuration options!"""
 )
-parser.add_argument("-lang", help="""Wiki language to use""")
+parser.add_argument("--lang", help="""Wiki language to use""")
+parser.add_argument("--reuse", action="store_true", help="Reuse")
+
 args = parser.parse_args()
 
 # Default wiki language
@@ -488,59 +490,71 @@ missing = current[(current["cuser"].isnull()) & (current["cdate"].isnull())]
 print("MISSING CUSER OR CDATE")
 print(missing)
 
-new_stored = pd.DataFrame(columns=["article", "cdate", "cuser"])
+
+def retrieve_creation(missing):
+    new_stored = pd.DataFrame(columns=["article", "cdate", "cuser"])
+
+    # Define the number of retries and the delay between retries
+    max_retries = 3
+    retry_delay = 30  # seconds
+
+    for index, row in missing.iterrows():
+        titles = row["article"]
+        print(titles)
+        retries = 0
+        result = None
+        while retries < max_retries:
+            try:
+                result = site.api(
+                    "query",
+                    prop="revisions",
+                    rvprop="timestamp|user",
+                    rvdir="newer",
+                    rvlimit=1,
+                    titles=titles,
+                )
+                break  # Exit the loop if the API call is successful
+            except Exception as e:
+                print(f"API call failed: {e}")
+                retries += 1
+                if retries < max_retries:
+                    print(f"Retrying in {retry_delay} seconds...")
+                    time.sleep(retry_delay)
+                else:
+                    print("Max retries reached. Skipping this article.")
+                    result = None
+                    break
+        if result:
+            for page in result["query"]["pages"].values():
+                if "revisions" in page:
+                    if len(page["revisions"]) > 0:
+                        timestamp = None
+                        userrev = None
+
+                        if "timestamp" in page["revisions"][0]:
+                            timestamp = page["revisions"][0]["timestamp"]
+                        if "user" in page["revisions"][0]:
+                            userrev = page["revisions"][0]["user"]
+
+                        new_stored = new_stored.append(
+                            {"article": titles, "cdate": timestamp, "cuser": userrev},
+                            ignore_index=True,
+                        )
+                        time.sleep(1)
+
+    return new_stored
 
 
-# Define the number of retries and the delay between retries
-max_retries = 3
-retry_delay = 30  # seconds
+if not args.reuse:
+    new_stored = retrieve_creation(missing)
 
-for index, row in missing.iterrows():
-    titles = row["article"]
-    print(titles)
-    retries = 0
-    result = None
-    while retries < max_retries:
-        try:
-            result = site.api(
-                "query",
-                prop="revisions",
-                rvprop="timestamp|user",
-                rvdir="newer",
-                rvlimit=1,
-                titles=titles,
-            )
-            break  # Exit the loop if the API call is successful
-        except Exception as e:
-            print(f"API call failed: {e}")
-            retries += 1
-            if retries < max_retries:
-                print(f"Retrying in {retry_delay} seconds...")
-                time.sleep(retry_delay)
-            else:
-                print("Max retries reached. Skipping this article.")
-                result = None
-                break
-    if result:
-        for page in result["query"]["pages"].values():
-            if "revisions" in page:
-                if len(page["revisions"]) > 0:
-                    timestamp = None
-                    userrev = None
+    print("MISSING WITH EXTRA INFO FROM API")
+    print(new_stored)
 
-                    if "timestamp" in page["revisions"][0]:
-                        timestamp = page["revisions"][0]["timestamp"]
-                    if "user" in page["revisions"][0]:
-                        userrev = page["revisions"][0]["user"]
-
-                    new_stored = new_stored.append(
-                        {"article": titles, "cdate": timestamp, "cuser": userrev},
-                        ignore_index=True,
-                    )
-                    time.sleep(1)
-
-print("MISSING WITH EXTRA INFO FROM API")
-print(new_stored)
+    # We store here just in case
+    new_stored.to_csv("/tmp/allbios.missing.csv", index=False)
+else:
+    new_stored = pd.read_csv("/tmp/allbios.missing.csv")
 
 # INSERT or REPLACE sqlite new_stored
 insertInDB(new_stored, wikilang, conn)
