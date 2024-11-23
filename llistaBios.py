@@ -177,12 +177,10 @@ def printToWiki(toprint, mwclient, targetpage, milestonepage):
     i = 0
 
     print(count)
-
+    columns = toprint.columns.values.tolist()
+    columns.remove("lang")
     text = (
-        "{| class='wikitable sortable' \n!"
-        + "ordre !! "
-        + " !! ".join(toprint.columns.values.tolist())
-        + "\n"
+        "{| class='wikitable sortable' \n!" + "ordre !! " + " !! ".join(columns) + "\n"
     )
 
     for index, row in toprint.head(100).iterrows():
