@@ -140,6 +140,16 @@ def insertInDB(new_stored, lang, conn):
         row["cdate"] = row["cdate"].replace("T", " ")
         row["cdate"] = row["cdate"].replace("Z", "")
 
+        # Check problem user
+        if (
+            row["cuser"] == ""
+            or row["cuser"] == "nan"
+            or not row["cuser"]
+            or isinstance(row["cuser"], float)
+        ):
+            print("NO USER AT: " + row["article"])
+            row["cuser"] = None
+
         c.execute(
             "SELECT * from bios where BINARY article = %s and lang = %s",
             [row["article"], lang],
