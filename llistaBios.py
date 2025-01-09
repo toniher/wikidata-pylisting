@@ -4,7 +4,9 @@
 import argparse
 import io
 import json
+import logging
 import pprint
+import sys
 import time
 from urllib import request
 from urllib.parse import unquote
@@ -14,6 +16,7 @@ import MySQLdb
 import pandas as pd
 import requests
 
+logging.basicConfig(encoding="utf-8", level=logging.INFO)
 pp = pprint.PrettyPrinter(indent=4)
 
 # Import JSON configuration
@@ -27,6 +30,7 @@ parser.add_argument("--reuse", action="store_true", help="Reuse")
 args = parser.parse_args()
 
 # Default wiki language
+
 wikilang = "ca"
 
 host = "ca.wikipedia.org"
@@ -41,9 +45,9 @@ if "lang" in args:
 
 data = {}
 targetpage = "User:Toniher/Bios"
-milestonepage = "Plantilla:NumBios"
+milestonepage = "Template:NumBios"
 targetpagedones = "Viquiprojecte:Viquidones/Progrés"
-milestonepagedones = "Plantilla:FitaDones"
+milestonepagedones = "Template:FitaDones"
 
 checkpage = "User:Toniher/CheckBios"
 checkgender = "User:Toniher/CheckGender"
@@ -59,15 +63,20 @@ if "config" in args:
         with open(args.config) as json_data_file:
             data = json.load(json_data_file)
 
-if "mw" in data:
-    if "host" in data["mw"]:
-        host = data["mw"]["host"]
-    if "user" in data["mw"]:
-        user = data["mw"]["user"]
-    if "password" in data["mw"]:
-        pwd = data["mw"]["password"]
-    if "protocol" in data["mw"]:
-        protocol = data["mw"]["protocol"]
+
+langdata = data[wikilang]
+
+# Let's check lang in conf
+
+if "mw" in langdata:
+    if "host" in langdata["mw"]:
+        host = langdata["mw"]["host"]
+    if "user" in langdata["mw"]:
+        user = langdata["mw"]["user"]
+    if "password" in langdata["mw"]:
+        pwd = langdata["mw"]["password"]
+    if "protocol" in langdata["mw"]:
+        protocol = langdata["mw"]["protocol"]
 
 if "mysql" in data:
     conn = MySQLdb.connect(
@@ -80,14 +89,32 @@ if "mysql" in data:
         init_command="SET NAMES utf8mb4",
     )
 
-if "targetpage" in data:
-    targetpage = data["targetpage"]
+if "targetpage" in langdata:
+    targetpage = langdata["targetpage"]
 
-if "milestonepage" in data:
-    milestonepage = data["milestonepage"]
+if "targetpagedones" in langdata:
+    targetpage = langdata["targetpagedones"]
 
-if "checkpage" in data:
-    checkpage = data["checkpage"]
+if "milestonepage" in langdata:
+    milestonepage = langdata["milestonepage"]
+
+if "milestonepagedones" in langdata:
+    milestonepage = langdata["milestonepagedones"]
+
+if "checkpage" in langdata:
+    checkpage = langdata["checkpage"]
+
+if "checkgender" in langdata:
+    checkpage = langdata["checkgender"]
+
+if "checkdisgender" in langdata:
+    checkpage = langdata["checkdisgender"]
+
+if "checkmultigender" in langdata:
+    checkpage = langdata["checkmultigender"]
+
+if "countgenderpage" in langdata:
+    countgenderpage = langdata["countgenderpage"]
 
 site = mwclient.Site(host, scheme=protocol)
 if user and pwd:
@@ -95,8 +122,8 @@ if user and pwd:
     site.login(user, pwd)
 
 if conn is None:
-    print("CONNECTION PROBLEM")
-    exit()
+    logging.error("CONNECTION PROBLEM")
+    sys.exit(1)
 
 cur = conn.cursor()
 
@@ -109,7 +136,7 @@ def checkWikiDataJSON(item, type="iw", lang="ca"):
         url = "https://www.wikidata.org/wiki/Special:EntityData/" + item + ".json"
 
         if type != "iw":
-            print(url)
+            logging.info(url)
 
         req = request.Request(url)
 
@@ -147,7 +174,7 @@ def insertInDB(new_stored, lang, conn):
             or not row["cuser"]
             or isinstance(row["cuser"], float)
         ):
-            print("NO USER AT: " + row["article"])
+            logging.info("NO USER AT: " + row["article"])
             row["cuser"] = None
 
         c.execute(
@@ -155,13 +182,13 @@ def insertInDB(new_stored, lang, conn):
             [row["article"], lang],
         )
         if c.rowcount > 0:
-            print("UPDATE " + row["article"])
+            logging.info("UPDATE " + row["article"])
             c.execute(
                 "UPDATE `bios` SET `cdate` = %s, `cuser` = %s where BINARY article = %s and lang = %s",
                 [row["cdate"], row["cuser"], row["article"], lang],
             )
         else:
-            print("INSERT " + row["article"])
+            logging.info("INSERT " + row["article"])
             c.execute(
                 "INSERT INTO `bios` (`article`, `lang`, `cdate`, `cuser`) VALUES (%s, %s, %s, %s)",
                 [row["article"], lang, row["cdate"], row["cuser"]],
@@ -172,7 +199,7 @@ def insertInDB(new_stored, lang, conn):
     return True
 
 
-def printToWiki(toprint, mwclient, targetpage, milestonepage):
+def printToWiki(toprint, site, targetpage, milestonepage):
     count = toprint.shape[0]
     i = 0
 
@@ -285,9 +312,7 @@ def cleanDb(conn):
     return True
 
 
-def printCheckWiki(
-    toprint, mwclient, checkpage, checkwd=True, checkgen=True, lang="ca"
-):
+def printCheckWiki(toprint, site, checkpage, checkwd=True, checkgen=True, lang="ca"):
     if checkgen:
         header = ["wikidata", "genere", "article"]
     else:
@@ -354,7 +379,7 @@ def printCheckWiki(
     return True
 
 
-def printCountGenere(toprint, mwclient, checkpage, bios_count, wikilang="ca"):
+def printCountGenere(toprint, site, checkpage, bios_count, wikilang="ca"):
     list_generes = []
     text = (
         "{| class='wikitable sortable' \n!"
@@ -461,7 +486,7 @@ SELECT ?item ?genere ?article WHERE {{
 
 headers = {
     "Accept": "text/csv",
-    "User-Agent": "darreresBio/0.1.0 (https://github.com/WikimediaCAT/wikidata-pylisting; toniher@wikimedia.cat) Python/3.7",
+    "User-Agent": "darreresBio/0.1.0 (https://github.com/toniher/wikidata-pylisting; toniher@cau.cat) Python/3.12",
 }
 params = {"query": query}
 response = requests.get(
@@ -471,7 +496,7 @@ response = requests.get(
 c = pd.read_csv(io.StringIO(response.content.decode("utf-8")))
 
 c["article"] = c["article"].apply(
-    lambda x: unquote(x.replace("https://ca.wikipedia.org/wiki/", ""))
+    lambda x: unquote(x.replace("https://" + wikilang + ".wikipedia.org/wiki/", ""))
 )
 c["genere"] = c["genere"].astype("str")
 c["genere"] = c["genere"].apply(
@@ -485,7 +510,7 @@ c["genere"] = c["genere"].apply(lambda x: "unknown" if "wikidata.org" in x else 
 c["item"] = c["item"].apply(lambda x: x.replace("http://www.wikidata.org/entity/", ""))
 
 # Double check outcome
-c.to_csv("/tmp/allbios.csv", index=False)
+c.to_csv("/tmp/allbios." + wikilang + ".csv", index=False)
 
 # Get stored info
 stored = pd.read_sql_query("SELECT * from `bios`", conn)
@@ -495,7 +520,7 @@ current = pd.merge(c, stored, how="left", on="article")
 
 # Iterate only entries with null user or timestamp
 missing = current[(current["cuser"].isnull()) & (current["cdate"].isnull())]
-print("MISSING CUSER OR CDATE")
+logging.info("MISSING CUSER OR CDATE")
 print(missing)
 
 
@@ -556,13 +581,13 @@ def retrieve_creation(missing):
 if not args.reuse:
     new_stored = retrieve_creation(missing)
 
-    print("MISSING WITH EXTRA INFO FROM API")
+    logging.info("MISSING WITH EXTRA INFO FROM API")
     print(new_stored)
 
     # We store here just in case
-    new_stored.to_csv("/tmp/allbios.missing.csv", index=False)
+    new_stored.to_csv("/tmp/allbios.missing." + wikilang + ".csv", index=False)
 else:
-    new_stored = pd.read_csv("/tmp/allbios.missing.csv")
+    new_stored = pd.read_csv("/tmp/allbios.missing." + wikilang + ".csv")
 
 # INSERT or REPLACE sqlite new_stored
 insertInDB(new_stored, wikilang, conn)
@@ -587,7 +612,7 @@ clean_duplicates_full = toprint.drop_duplicates(subset=["item", "article"], keep
 
 bios_count = clean_duplicates_full.shape[0]
 
-printToWiki(clean_duplicates_full, mwclient, targetpage, milestonepage)
+printToWiki(clean_duplicates_full, site, targetpage, milestonepage)
 
 dones = toprint[toprint["genere"] == "Q6581072"]
 printToWiki(dones, mwclient, targetpagedones, milestonepagedones)
@@ -599,7 +624,7 @@ saveToDb(clean_duplicates, conn)
 cleanDb(conn)
 
 # Moved pages
-printCheckWiki(current2[(current2["cdate"].isnull())], mwclient, checkpage, True)
+printCheckWiki(current2[(current2["cdate"].isnull())], site, checkpage, True)
 
 # Print missing gender
 printCheckWiki(
@@ -631,9 +656,9 @@ countgenere = (
     .reset_index(name="count")
     .sort_values(["count"], ascending=False)
 )
-print(countgenere)
+logger.info(countgenere)
 
-printCountGenere(countgenere, mwclient, countgenderpage, bios_count, wikilang)
+printCountGenere(countgenere, site, countgenderpage, bios_count, wikilang)
 
 groupgender = (
     clean_duplicates.groupby(["item", "article"]).size().reset_index(name="count")
@@ -646,4 +671,5 @@ printCheckWiki(
     False,
 )
 
-conn.close()
+if conn:
+    conn.close()
